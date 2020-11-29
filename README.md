@@ -1,6 +1,4 @@
-# @hex-engine/2d game
-
-This repo was created using `create-hex-engine-game`.
+# stargo
 
 ## Usage
 
@@ -17,4 +15,3 @@ npm run build
 ```
 
 For more info, head on over to [Hex Engine's website](https://hex-engine.dev).
-# stargo
