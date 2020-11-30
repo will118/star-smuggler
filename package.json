@@ -1,18 +1,19 @@
 {
-  "name": "my-hex-engine-game",
-  "version": "0.0.1",
+  "name": "star-smuggler",
   "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "webpack serve --mode development"
+  },
   "dependencies": {
-    "@hex-engine/2d": "^0.8.0"
+    "excalibur": "^0.24.5"
   },
   "devDependencies": {
-    "hex-engine-scripts": "^0.8.0",
-    "typescript": "^3.9.2"
-  },
-  "scripts": {
-    "start": "hex-engine-scripts dev",
-    "dev": "hex-engine-scripts dev",
-    "build": "hex-engine-scripts build",
-    "test": "hex-engine-scripts test"
+    "file-loader": "^6.2.0",
+    "ts-loader": "^8.0.11",
+    "typescript": "^4.1.2",
+    "webpack": "^5.9.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }
