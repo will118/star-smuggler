@@ -8,7 +8,7 @@ const game = new ex.Engine({
 const bg = new ex.Texture('/assets/sprites/space/BlueNebulae.png');
 const loader = new ex.Loader([bg]);
 
-const map = new ex.TileMap(0, 0, 960, 480, 20, 20);
+const map = new ex.TileMap(0, 0, 960, 480, 2, 3);
 const sheet = new ex.SpriteSheet(bg, 1, 1, 960, 540);
 map.registerSpriteSheet('sheet5000', sheet);
 
@@ -17,6 +17,8 @@ map.getCell(0, 0).pushSprite(ts);
 map.getCell(0, 1).pushSprite(ts);
 map.getCell(1, 1).pushSprite(ts);
 map.getCell(1, 0).pushSprite(ts);
+map.getCell(2, 1).pushSprite(ts);
+map.getCell(2, 0).pushSprite(ts);
 
 class Ship extends ex.Actor {
   constructor() {
@@ -26,23 +28,26 @@ class Ship extends ex.Actor {
       width: 200,
       height: 200
     });
-
-    this.color = ex.Color.Chartreuse;
-    this.body.collider.type = ex.CollisionType.Fixed;
   }
 
-  onPostUpdate(_engine: ex.Engine, _delta: number) {
-    if (this.pos.x > 1000) {
-      this.pos.setTo(500, this.pos.y);
+  onInitialize() {
+    this.color = ex.Color.Chartreuse;
+    this.body.collider.type = ex.CollisionType.Fixed;
+    this.vel.setTo(100, 0);
+  }
+
+
+  onPostDraw(_ctx: CanvasRenderingContext2D, _delta: number) {
+    if (this.pos.x > 1920) {
+      this.pos.x -= 960;
     }
   }
 }
 
-const ship2 = new Ship();
+const ship = new Ship();
 
 game.start(loader).then(() => {
   game.addTileMap(map);
-  game.add(ship2);
-  ship2.vel.setTo(100, 0);
-  game.currentScene.camera.strategy.lockToActor(ship2);
+  game.add(ship);
+  game.currentScene.camera.strategy.lockToActor(ship);
 })
