@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'CodeFont';
+  src: url(assets/fonts/monogram.ttf);
+}
+
+#root {
+  position: relative;
+}
+
+#root #ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 900;
+  height: 1600;
+}
+
+#ui .code-container {
+  font-family: 'CodeFont', Fallback, sans-serif;
+  font-size: 68px;
+  position: absolute;
+  top: 100px;
+  left: 500px;
+  background: #808080e8;
+  color: white;
+  width: 600px;
+  height: 600px;
+  padding: 10px;
+}

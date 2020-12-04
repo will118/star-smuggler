@@ -19,7 +19,7 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(png|jpg|bmp|wav|mp3)$/,
+        test: /\.(ttf|png|jpg|bmp|wav|mp3)$/,
         use: [{
           loader: 'file-loader',
           options: {

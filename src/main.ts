@@ -23,4 +23,7 @@ game.start(loader).then(() => {
   game.addTileMap(map);
   game.add(ship);
   game.currentScene.camera.strategy.lockToActor(ship);
+  ship.on('pointerup', () => {
+    overlay.openEditor();
+  });
 })

@@ -4,30 +4,29 @@ import { CodeJar } from 'codejar';
 const ui = document.getElementById('ui');
 
 export class Overlay extends ex.Scene {
+  private _editor: HTMLDivElement;
+
   constructor(engine: ex.Engine) {
     super(engine);
+    this._editor = document.createElement('div')
   }
 
   onActivate() {
     ui!.classList.add('MainMenu')
 
-    const code = document.createElement('div')
+    this._editor.className = 'code-container';
 
-    code.className = 'code-container';
+    const highlight = (_editor: HTMLElement) => {}
 
-    const highlight = (_editor: HTMLElement) => {
-      // const code = editor.textContent
-      // Do something with code and set html.
-      // editor.innerHTML = code
-    }
-
-    const jar = CodeJar(code, highlight)
+    const jar = CodeJar(this._editor, highlight, { tab: '  ' });
 
     jar.onUpdate(code => {
       console.log(code)
     });
+  }
 
-    ui!.appendChild(code)
+  openEditor() {
+    ui!.appendChild(this._editor);
   }
 
   onDeactivate() {
