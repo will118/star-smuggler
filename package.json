@@ -6,6 +6,7 @@
     "dev": "webpack serve --mode development"
   },
   "dependencies": {
+    "codejar": "^3.2.3",
     "excalibur": "^0.24.5"
   },
   "devDependencies": {
