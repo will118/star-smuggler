@@ -8,7 +8,7 @@ const game = new ex.Engine({
 const bg = new ex.Texture('/assets/sprites/space/BlueNebulae.png');
 const loader = new ex.Loader([bg]);
 
-const map = new ex.TileMap(0, 0, 960, 480, 2, 3);
+const map = new ex.TileMap(0, 0, 960, 540, 2, 3);
 const sheet = new ex.SpriteSheet(bg, 1, 1, 960, 540);
 map.registerSpriteSheet('sheet5000', sheet);
 
