@@ -1,6 +1,5 @@
 import * as ex from 'excalibur';
 import { Sounds } from '../resources';
-import Config from '../config';
 import { Bullet } from './bullet';
 
 export class Ship extends ex.Actor {
@@ -26,13 +25,11 @@ export class Ship extends ex.Actor {
     this.color = ex.Color.Chartreuse;
   }
 
-  fireGun(engine: ex.Engine) {
-    const bullet = new Bullet(
-      this.pos.x + 200,
-      this.pos.y,
-      -Config.playerBulletVelocity,
-      600,
-      this);
+  fireGun(engine: ex.Engine, x: number, y: number) {
+    const source = new ex.Vector(this.pos.x + 200, this.pos.y);
+    const target = new ex.Vector(x, y);
+    const dir = target.sub(source);
+    const bullet = new Bullet(source, dir, this);
      Sounds.laserSound.play();
      engine.add(bullet);
   }

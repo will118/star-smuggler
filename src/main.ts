@@ -3,6 +3,8 @@ import { loader } from './resources';
 import { Ship } from './actors/ship';
 import { AsteroidField } from './actors/asteroid';
 import { Container } from './container';
+import { GameVm } from './game-vm';
+import { eventStream } from './actors/ship-components/event-stream';
 
 const game = new ex.Engine({
   canvasElementId: 'game',
@@ -12,6 +14,10 @@ const game = new ex.Engine({
 });
 
 const ship = new Ship();
+
+const vm = new GameVm(eventStream, (x, y) => ship.fireGun(game, x, y));
+console.log('Game VM started: ', vm);
+
 const asteroidField = new AsteroidField();
 const container = new Container(game);
 

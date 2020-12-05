@@ -3,6 +3,7 @@ import { CodeJar } from 'codejar';
 import { Component, code } from './code';
 import { HealthBar } from './actors/healthbar';
 import { Background } from './actors/background';
+import { Scanner } from './actors/ship-components/scanner';
 
 const ui = document.getElementById('ui');
 
@@ -40,6 +41,7 @@ export class Container extends ex.Scene {
     background.vel.setTo(-20, 0);
     engine.add(background);
     engine.add(new HealthBar());
+    engine.add(new Scanner());
   }
 
   onActivate() {

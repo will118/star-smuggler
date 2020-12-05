@@ -5,10 +5,10 @@ import { Asteroid } from './asteroid';
 
 export class Bullet extends ex.Actor {
   public owner?: ex.Actor;
-  constructor(x: number, y: number, dx: number, dy: number, owner?: ex.Actor) {
+  constructor(source: ex.Vector, vel: ex.Vector, owner?: ex.Actor) {
     super({
-      pos: new ex.Vector(x, y),
-      vel: new ex.Vector(dx, dy),
+      pos: source,
+      vel: vel,
       width: Config.bulletSize,
       height: Config.bulletSize,
     });

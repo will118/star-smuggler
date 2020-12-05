@@ -86,9 +86,8 @@ export class Asteroid extends ex.Actor {
       if (this.collision.other instanceof Ship) {
         engine.currentScene.camera.shake(8, 8, 100);
         stats.hp -= 10;
+        this.onImpact(engine);
       }
-
-      this.onImpact(engine);
     }
 
     if (
