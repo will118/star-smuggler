@@ -25,7 +25,8 @@ game.start(loader).then(() => {
   game.add(ship);
   game.currentScene.camera.strategy.lockToActor(ship);
   ship.on('pointerup', () => {
-    overlay.openEditor();
+    // overlay.openEditor();
+    ship.fireGun();
   });
   game.add(asteroidField);
   // game.isDebug = true;

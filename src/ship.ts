@@ -1,4 +1,5 @@
 import * as ex from 'excalibur';
+import { Sounds } from './resources';
 import Config from './config';
 
 // enum Gun {
@@ -34,11 +35,11 @@ export class Ship extends ex.Actor {
     this.vel.setTo(Config.shipSpeed, 0);
   }
 
-  // fireGun(x: number, y: number, gun: Gun) {
-     // let bullet = new Bullet(this.pos.x, this.pos.y, 0, Config.playerBulletVelocity, this);
-     // Sounds.laserSound.play();
+  fireGun() {
+     // let bullet = new bullet(this.pos.x, this.pos.y, 0, config.playerbulletvelocity, this);
+     Sounds.laserSound.play();
      // engine.add(bullet);
-  // }
+  }
 
   onPostDraw(_ctx: CanvasRenderingContext2D, _delta: number) {
     if (this.pos.x > 1920) {
