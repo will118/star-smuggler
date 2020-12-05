@@ -1,12 +1,8 @@
 import * as ex from "excalibur";
+import { loader } from './resources';
 import { Ship } from './ship';
-import {
-  AsteroidField,
-  largeAsteroid,
-  smallAsteroid1,
-  smallAsteroid2,
-} from './asteroid';
-import { bg, map } from './map';
+import { AsteroidField } from './asteroid';
+import { map } from './map';
 import { Overlay } from './overlay';
 
 const game = new ex.Engine({
@@ -15,13 +11,6 @@ const game = new ex.Engine({
   height: 900,
   width: 1600
 });
-
-const loader = new ex.Loader([
-  bg,
-  largeAsteroid,
-  smallAsteroid1,
-  smallAsteroid2,
-]);
 
 const ship = new Ship();
 const asteroidField = new AsteroidField();

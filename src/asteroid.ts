@@ -1,12 +1,6 @@
 import * as ex from 'excalibur';
+import { Images } from './resources';
 import { Ship } from './ship';
-
-export const largeAsteroid =
-  new ex.Texture('/assets/sprites/planets/Asteroids/large_brown.png');
-export const smallAsteroid1 =
-  new ex.Texture('/assets/sprites/planets/Asteroids/small_brown_1.png');
-export const smallAsteroid2 =
-  new ex.Texture('/assets/sprites/planets/Asteroids/small_brown_2.png');
 
 const random = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -45,7 +39,7 @@ export class Asteroid extends ex.Actor {
   constructor({
     rx,
     collisionType = ex.CollisionType.Active,
-    texture = largeAsteroid,
+    texture = Images.largeAsteroid,
     ...actorArgs
   }: AsteroidArgs) {
     super({
@@ -77,14 +71,14 @@ export class Asteroid extends ex.Actor {
       engine.add(new Asteroid({
         pos: this.pos,
         collisionType: ex.CollisionType.PreventCollision,
-        texture: smallAsteroid1,
+        texture: Images.smallAsteroid1,
         vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
       }));
 
       engine.add(new Asteroid({
         pos: this.pos,
         collisionType: ex.CollisionType.PreventCollision,
-        texture: smallAsteroid2,
+        texture: Images.smallAsteroid2,
         vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
       }));
 

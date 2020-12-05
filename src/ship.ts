@@ -1,13 +1,28 @@
 import * as ex from 'excalibur';
+// import Config from './config';
+
+// enum Gun {
+  // Laser
+// }
+
+// class Bullet extends ex.Actor {
+// }
 
 export class Ship extends ex.Actor {
+  // public static Bullets: Bullet[] = [];
+
   constructor() {
     super({
       x: 150,
       y: 600,
       body: new ex.Body({
         collider: new ex.Collider({
-          shape: ex.Shape.Polygon([new ex.Vector(-200, -100), new ex.Vector(-200, 100), new ex.Vector(200, 25), new ex.Vector(200, -25)]),
+          shape: ex.Shape.Polygon([
+            new ex.Vector(-200, -100),
+            new ex.Vector(-200, 100),
+            new ex.Vector(200, 25),
+            new ex.Vector(200, -25)
+          ]),
           type: ex.CollisionType.Fixed,
         })
       }),
@@ -18,6 +33,12 @@ export class Ship extends ex.Actor {
     this.color = ex.Color.Chartreuse;
     this.vel.setTo(10, 0);
   }
+
+  // fireGun(x: number, y: number, gun: Gun) {
+     // let bullet = new Bullet(this.pos.x, this.pos.y, 0, Config.playerBulletVelocity, this);
+     // Sounds.laserSound.play();
+     // engine.add(bullet);
+  // }
 
   onPostDraw(_ctx: CanvasRenderingContext2D, _delta: number) {
     if (this.pos.x > 1920) {
