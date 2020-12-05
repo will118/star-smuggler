@@ -55,7 +55,6 @@ export class Background extends ex.Actor {
 
   onPostDraw(_ctx: CanvasRenderingContext2D, _delta: number) {
     if (this.pos.x < -BG_WIDTH) {
-      console.log('repeating');
       this.pos.x += BG_WIDTH;
     }
   }

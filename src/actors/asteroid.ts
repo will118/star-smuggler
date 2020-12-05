@@ -1,6 +1,7 @@
 import * as ex from 'excalibur';
 import { Images } from '../resources';
 import { Ship } from './ship';
+import { stats } from '../stats';
 
 const random = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -84,6 +85,7 @@ export class Asteroid extends ex.Actor {
     if (this.collision) {
       if (this.collision.other instanceof Ship) {
         engine.currentScene.camera.shake(8, 8, 100);
+        stats.hp -= 10;
       }
 
       this.onImpact(engine);
