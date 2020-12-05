@@ -58,31 +58,35 @@ export class Asteroid extends ex.Actor {
     this.on('collisionstart', (c) => this.collision = c);
   }
 
+  onImpact(engine: ex.Engine) {
+    const newVelX = (velX: number) => velX > -20 ? // head on dead stop
+      velX - random(50, 100) : velX;
+    const newVelY = (velY: number) => velY * random(-1.5, 3);
+
+    engine.add(new Asteroid({
+      pos: this.pos,
+      collisionType: ex.CollisionType.PreventCollision,
+      texture: Images.smallAsteroid1,
+      vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
+    }));
+
+    engine.add(new Asteroid({
+      pos: this.pos,
+      collisionType: ex.CollisionType.PreventCollision,
+      texture: Images.smallAsteroid2,
+      vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
+    }));
+
+    return this.kill();
+  }
+
   onPostUpdate(engine: ex.Engine) {
     if (this.collision) {
       if (this.collision.other instanceof Ship) {
         engine.currentScene.camera.shake(8, 8, 100);
       }
 
-      const newVelX = (velX: number) => velX > -20 ? // head on dead stop
-        velX - random(50, 100) : velX;
-      const newVelY = (velY: number) => velY * random(-1.5, 3);
-
-      engine.add(new Asteroid({
-        pos: this.pos,
-        collisionType: ex.CollisionType.PreventCollision,
-        texture: Images.smallAsteroid1,
-        vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
-      }));
-
-      engine.add(new Asteroid({
-        pos: this.pos,
-        collisionType: ex.CollisionType.PreventCollision,
-        texture: Images.smallAsteroid2,
-        vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
-      }));
-
-      return this.kill();
+      this.onImpact(engine);
     }
 
     if (

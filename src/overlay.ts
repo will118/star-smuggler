@@ -1,5 +1,6 @@
-import * as ex from "excalibur";
+import * as ex from 'excalibur';
 import { CodeJar } from 'codejar';
+import { HealthBar } from './actors/healthbar';
 
 const ui = document.getElementById('ui');
 
@@ -9,6 +10,11 @@ export class Overlay extends ex.Scene {
   constructor(engine: ex.Engine) {
     super(engine);
     this._editor = document.createElement('div')
+  }
+
+  onInitialize(engine: ex.Engine) {
+    const healthBar = new HealthBar();
+    engine.add(healthBar);
   }
 
   onActivate() {

@@ -34,7 +34,12 @@ export class Ship extends ex.Actor {
   }
 
   fireGun(engine: ex.Engine) {
-     let bullet = new Bullet(this.pos.x + 200, this.pos.y, -Config.playerBulletVelocity, 0, this);
+    const bullet = new Bullet(
+      this.pos.x + 200,
+      this.pos.y,
+      -Config.playerBulletVelocity - Config.shipSpeed,
+      600,
+      this);
      Sounds.laserSound.play();
      engine.add(bullet);
   }
