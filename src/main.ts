@@ -1,5 +1,11 @@
 import * as ex from "excalibur";
 import { Ship } from './ship';
+import {
+  AsteroidField,
+  largeAsteroid,
+  smallAsteroid1,
+  smallAsteroid2,
+} from './asteroid';
 import { bg, map } from './map';
 import { Overlay } from './overlay';
 
@@ -10,9 +16,15 @@ const game = new ex.Engine({
   width: 1600
 });
 
-const loader = new ex.Loader([bg]);
+const loader = new ex.Loader([
+  bg,
+  largeAsteroid,
+  smallAsteroid1,
+  smallAsteroid2,
+]);
 
 const ship = new Ship();
+const asteroidField = new AsteroidField();
 
 const overlay = new Overlay(game);
 
@@ -26,4 +38,6 @@ game.start(loader).then(() => {
   ship.on('pointerup', () => {
     overlay.openEditor();
   });
+  game.add(asteroidField);
+  // game.isDebug = true;
 })
