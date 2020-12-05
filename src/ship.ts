@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-// import Config from './config';
+import Config from './config';
 
 // enum Gun {
   // Laser
@@ -31,7 +31,7 @@ export class Ship extends ex.Actor {
 
   onInitialize() {
     this.color = ex.Color.Chartreuse;
-    this.vel.setTo(10, 0);
+    this.vel.setTo(Config.shipSpeed, 0);
   }
 
   // fireGun(x: number, y: number, gun: Gun) {
