@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import { Images } from './resources';
+import { Images } from '../resources';
 import { Ship } from './ship';
 
 const random = (min: number, max: number) => Math.random() * (max - min) + min;

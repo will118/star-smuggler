@@ -1,7 +1,7 @@
 import * as ex from "excalibur";
 import { loader } from './resources';
-import { Ship } from './ship';
-import { AsteroidField } from './asteroid';
+import { Ship } from './actors/ship';
+import { AsteroidField } from './actors/asteroid';
 import { map } from './map';
 import { Overlay } from './overlay';
 
@@ -26,7 +26,7 @@ game.start(loader).then(() => {
   game.currentScene.camera.strategy.lockToActor(ship);
   ship.on('pointerup', () => {
     // overlay.openEditor();
-    ship.fireGun();
+    ship.fireGun(game);
   });
   game.add(asteroidField);
   // game.isDebug = true;
