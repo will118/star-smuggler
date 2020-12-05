@@ -8,7 +8,7 @@ const smallAsteroid2File = require('../assets/sprites/planets/Asteroids/small_br
 const laserFile = require('../assets/sounds/laser.wav');
 
 const Images: { [key: string]: ex.Texture } = {
-  bg: new ex.Texture(bgFile),
+  background: new ex.Texture(bgFile),
   bulletSheet: new ex.Texture(bulletSheetFile),
   largeAsteroid: new ex.Texture(largeAsteroidFile),
   smallAsteroid1: new ex.Texture(smallAsteroid1File),

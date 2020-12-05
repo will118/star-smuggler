@@ -1,10 +1,11 @@
 import * as ex from 'excalibur';
 import { CodeJar } from 'codejar';
 import { HealthBar } from './actors/healthbar';
+import { Background } from './actors/background';
 
 const ui = document.getElementById('ui');
 
-export class Overlay extends ex.Scene {
+export class Container extends ex.Scene {
   private _editor: HTMLDivElement;
 
   constructor(engine: ex.Engine) {
@@ -13,8 +14,10 @@ export class Overlay extends ex.Scene {
   }
 
   onInitialize(engine: ex.Engine) {
-    const healthBar = new HealthBar();
-    engine.add(healthBar);
+    const background = new Background();
+    background.vel.setTo(-20, 0);
+    engine.add(background);
+    engine.add(new HealthBar());
   }
 
   onActivate() {
@@ -36,7 +39,6 @@ export class Overlay extends ex.Scene {
   }
 
   onDeactivate() {
-    // Ensure we cleanup the DOM and remove any children when transitioning scenes
     ui!.classList.remove('MainMenu')
     ui!.innerHTML = ''
   }

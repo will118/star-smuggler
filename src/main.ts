@@ -1,9 +1,8 @@
-import * as ex from "excalibur";
+import * as ex from 'excalibur';
 import { loader } from './resources';
 import { Ship } from './actors/ship';
 import { AsteroidField } from './actors/asteroid';
-import { map } from './map';
-import { Overlay } from './overlay';
+import { Container } from './container';
 
 const game = new ex.Engine({
   canvasElementId: 'game',
@@ -15,15 +14,11 @@ const game = new ex.Engine({
 const ship = new Ship();
 const asteroidField = new AsteroidField();
 
-const overlay = new Overlay(game);
-
-game.addScene('overlay', overlay);
-game.goToScene('overlay');
+game.addScene('container', new Container(game));
+game.goToScene('container');
 
 game.start(loader).then(() => {
-  game.addTileMap(map);
   game.add(ship);
-  game.currentScene.camera.strategy.lockToActor(ship);
   ship.on('pointerup', () => {
     // overlay.openEditor();
     ship.fireGun(game);
