@@ -5,15 +5,18 @@ export class Ship extends ex.Actor {
     super({
       x: 150,
       y: 600,
-      width: 200,
-      height: 200
+      body: new ex.Body({
+        collider: new ex.Collider({
+          shape: ex.Shape.Polygon([new ex.Vector(-200, -100), new ex.Vector(-200, 100), new ex.Vector(200, 25), new ex.Vector(200, -25)]),
+          type: ex.CollisionType.Fixed,
+        })
+      }),
     });
   }
 
   onInitialize() {
     this.color = ex.Color.Chartreuse;
-    this.body.collider.type = ex.CollisionType.Fixed;
-    this.vel.setTo(60, 0);
+    this.vel.setTo(10, 0);
   }
 
   onPostDraw(_ctx: CanvasRenderingContext2D, _delta: number) {
