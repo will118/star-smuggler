@@ -1,5 +1,6 @@
 import * as ex from 'excalibur';
 import { CodeJar } from 'codejar';
+import { Component, code } from './code';
 import { HealthBar } from './actors/healthbar';
 import { Background } from './actors/background';
 
@@ -8,6 +9,7 @@ const ui = document.getElementById('ui');
 export class Container extends ex.Scene {
   private _editorModal: HTMLDivElement;
   private _editor: HTMLDivElement;
+  private _code: string | null = null;
 
   constructor(engine: ex.Engine) {
     super(engine);
@@ -26,6 +28,7 @@ export class Container extends ex.Scene {
     button.innerText = 'Save';
 
     button.addEventListener('click', () => {
+      code.updateScript(Component.LaserGun, this._code!);
       ui!.removeChild(this._editorModal);
     });
 
@@ -42,9 +45,10 @@ export class Container extends ex.Scene {
   onActivate() {
     const highlight = (_editor: HTMLElement) => {}
     const jar = CodeJar(this._editor, highlight, { tab: '  ' });
+    jar.updateCode(code.getScript(Component.LaserGun));
 
     jar.onUpdate(code => {
-      console.log(code)
+      this._code = code;
     });
   }
 
