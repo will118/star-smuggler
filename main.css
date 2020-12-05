@@ -15,7 +15,7 @@
   height: 1600;
 }
 
-#ui .code-container {
+#ui .editor {
   font-family: 'CodeFont', Fallback, sans-serif;
   font-size: 68px;
   position: absolute;
@@ -26,4 +26,21 @@
   width: 600px;
   height: 600px;
   padding: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+#ui .editor .actualEditor {
+  width: 80%;
+  height: 100%;
+}
+
+#ui .editor .buttons {
+  width: 20%;
+  height: 100%;
+}
+
+#ui .editor .buttons button {
+  font-family: 'CodeFont', Fallback, sans-serif;
+  font-size: 50px;
 }

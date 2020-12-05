@@ -13,15 +13,16 @@ const game = new ex.Engine({
 
 const ship = new Ship();
 const asteroidField = new AsteroidField();
+const container = new Container(game);
 
-game.addScene('container', new Container(game));
+game.addScene('container', container);
 game.goToScene('container');
 
 game.start(loader).then(() => {
   game.add(ship);
   ship.on('pointerup', () => {
-    // overlay.openEditor();
-    ship.fireGun(game);
+    container.openEditor();
+    // ship.fireGun(game);
   });
   game.add(asteroidField);
   // game.isDebug = true;

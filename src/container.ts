@@ -6,11 +6,30 @@ import { Background } from './actors/background';
 const ui = document.getElementById('ui');
 
 export class Container extends ex.Scene {
+  private _editorModal: HTMLDivElement;
   private _editor: HTMLDivElement;
 
   constructor(engine: ex.Engine) {
     super(engine);
+    this._editorModal = document.createElement('div');
+    this._editorModal.className = 'editor';
+
     this._editor = document.createElement('div')
+    this._editor.className = 'actualEditor';
+    this._editorModal.appendChild(this._editor);
+
+    const buttons = document.createElement('div');
+    buttons.className = 'buttons';
+    this._editorModal.appendChild(buttons);
+
+    const button = document.createElement('button');
+    button.innerText = 'Save';
+
+    button.addEventListener('click', () => {
+      ui!.removeChild(this._editorModal);
+    });
+
+    buttons.appendChild(button);
   }
 
   onInitialize(engine: ex.Engine) {
@@ -21,12 +40,7 @@ export class Container extends ex.Scene {
   }
 
   onActivate() {
-    ui!.classList.add('MainMenu')
-
-    this._editor.className = 'code-container';
-
     const highlight = (_editor: HTMLElement) => {}
-
     const jar = CodeJar(this._editor, highlight, { tab: '  ' });
 
     jar.onUpdate(code => {
@@ -35,11 +49,10 @@ export class Container extends ex.Scene {
   }
 
   openEditor() {
-    ui!.appendChild(this._editor);
+    ui!.appendChild(this._editorModal);
   }
 
   onDeactivate() {
-    ui!.classList.remove('MainMenu')
     ui!.innerHTML = ''
   }
 }
