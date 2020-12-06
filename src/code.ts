@@ -1,3 +1,5 @@
+import { ProgramAst, parse } from './space-lang/parser';
+
 export enum Component {
   LaserGun
 }
@@ -16,6 +18,10 @@ class Code {
   getScript(component: Component): string {
     const code = this._componentScripts.get(component);
     return code || '';
+  }
+
+  getParsed(component: Component): ProgramAst {
+    return parse(this.getScript(component));
   }
 }
 

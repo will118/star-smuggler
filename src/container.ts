@@ -4,16 +4,21 @@ import { Component, code } from './code';
 import { HealthBar } from './actors/healthbar';
 import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
+import { GameVm } from './game-vm';
 
 const ui = document.getElementById('ui');
 
 export class Container extends ex.Scene {
+  private _gameVm: GameVm;
   private _editorModal: HTMLDivElement;
   private _editor: HTMLDivElement;
   private _code: string | null = null;
 
-  constructor(engine: ex.Engine) {
+  constructor(engine: ex.Engine, gameVm: GameVm) {
     super(engine);
+
+    this._gameVm = gameVm;
+
     this._editorModal = document.createElement('div');
     this._editorModal.className = 'editor';
 
@@ -30,6 +35,7 @@ export class Container extends ex.Scene {
 
     button.addEventListener('click', () => {
       code.updateScript(Component.LaserGun, this._code!);
+      this._gameVm.exec(code.getParsed(Component.LaserGun));
       ui!.removeChild(this._editorModal);
     });
 

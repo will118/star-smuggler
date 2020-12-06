@@ -19,7 +19,7 @@ const vm = new GameVm(eventStream, (x, y) => ship.fireGun(game, x, y));
 console.log('Game VM started: ', vm);
 
 const asteroidField = new AsteroidField();
-const container = new Container(game);
+const container = new Container(game, vm);
 
 game.addScene('container', container);
 game.goToScene('container');
