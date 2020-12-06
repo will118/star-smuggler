@@ -12,3 +12,12 @@ test('parses basic operation', t => {
       [Instruction.MOVX, [EventType.Laser]],
     ]);
 });
+
+test('parses sub/add', t => {
+  t.deepEqual(
+    parse('SUB 0 10\nADD 2 10'),
+    [
+      [Instruction.SUB, [0, 10]],
+      [Instruction.ADD, [2, 10]],
+    ]);
+});

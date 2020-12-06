@@ -3,7 +3,9 @@ import { EventType, EventTypeLookup } from '../actors/ship-components/event-stre
 export enum Instruction {
   XEQ = 'XEQ',
   MOVX = 'MOVX',
-  SLP = 'SLP'
+  SLP = 'SLP',
+  ADD = 'ADD',
+  SUB = 'SUB',
 }
 
 enum Register {
@@ -32,11 +34,10 @@ export const parse = (text: string): ProgramAst => {
 
   const peek = () => text[current];
   const advance = () => text[current++];
-
   const isEOF = () => current >= text.length;
 
   const instruction = () => {
-    while (!isEOF() && text[current] !== ' ' && text[current] !== '\n') {
+    while (!isEOF() && peek() !== ' ') {
       advance();
     }
 
@@ -52,6 +53,8 @@ export const parse = (text: string): ProgramAst => {
       case Instruction.XEQ:
       case Instruction.MOVX:
       case Instruction.SLP:
+      case Instruction.SUB:
+      case Instruction.ADD:
         inst = name;
         break;
       default:
@@ -107,8 +110,6 @@ export const parse = (text: string): ProgramAst => {
     }
     start = current;
   }
-
-  console.log(program);
 
   return program;
 }

@@ -58,6 +58,18 @@ export class GameVm {
             const [evtType] = operands;
             this._eventStream.post([evtType, env.Data]);
             break;
+          case Instruction.ADD:
+          case Instruction.SUB:
+            const [index, value] = operands;
+            if (index >= env.Data.length) {
+              throw new Error('Index out of range');
+            }
+            if (instruction === Instruction.ADD) {
+              env.Data[index] += value;
+            } else {
+              env.Data[index] -= value;
+            }
+            break;
         }
       }
     });
