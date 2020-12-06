@@ -42,7 +42,7 @@ export class Scanner extends Component {
         const asteroid: Asteroid = evt.other;
         if (!this._bogeys.has(asteroid)) {
           this._bogeys.set(asteroid, 0);
-          eventStream.onEvent([EventType.Scanner, [evt.other.pos.x, evt.other.pos.y]]);
+          eventStream.post([EventType.Scanner, [evt.other.pos.x, evt.other.pos.y]]);
         }
       }
     }

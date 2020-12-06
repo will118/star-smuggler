@@ -1,5 +1,6 @@
 export enum EventType {
-  Scanner
+  Scanner,
+  Laser
 }
 
 export type ShipEvent = [EventType, Array<number>];
@@ -17,7 +18,7 @@ export class EventStream {
     this._listeners.push(listener);
   }
 
-  onEvent(evt: ShipEvent) {
+  post(evt: ShipEvent) {
     for (const listener of this._listeners) {
       listener(evt);
     }
