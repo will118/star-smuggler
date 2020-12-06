@@ -28,7 +28,6 @@ game.start(loader).then(() => {
   game.add(ship);
   ship.on('pointerup', () => {
     container.openEditor();
-    // ship.fireGun(game);
   });
   game.add(asteroidField);
   // game.isDebug = true;

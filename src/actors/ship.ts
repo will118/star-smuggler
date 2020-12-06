@@ -1,6 +1,8 @@
 import * as ex from 'excalibur';
+import Config from '../config';
 import { Sounds } from '../resources';
 import { Bullet } from './bullet';
+import { stats } from '../stats';
 
 export class Ship extends ex.Actor {
   constructor() {
@@ -26,11 +28,14 @@ export class Ship extends ex.Actor {
   }
 
   fireGun(engine: ex.Engine, x: number, y: number) {
-    const source = new ex.Vector(this.pos.x + 200, this.pos.y);
-    const target = new ex.Vector(x, y);
-    const dir = target.sub(source);
-    const bullet = new Bullet(source, dir, this);
-     Sounds.laserSound.play();
-     engine.add(bullet);
+    if (stats.energy - Config.energyPerShot > 0) {
+      stats.energy -= Config.energyPerShot;
+      const source = new ex.Vector(this.pos.x + 200, this.pos.y);
+      const target = new ex.Vector(x, y);
+      const dir = target.sub(source);
+      const bullet = new Bullet(source, dir, this);
+      Sounds.laserSound.play();
+      engine.add(bullet);
+    }
   }
 }

@@ -2,6 +2,7 @@ import * as ex from 'excalibur';
 import { CodeJar } from 'codejar';
 import { Component, code } from './code';
 import { HealthBar } from './actors/healthbar';
+import { EnergyBar } from './actors/energybar';
 import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
 import { GameVm } from './game-vm';
@@ -34,7 +35,7 @@ export class Container extends ex.Scene {
     button.innerText = 'Save';
 
     button.addEventListener('click', () => {
-      code.updateScript(Component.LaserGun, this._code!);
+      code.updateScript(Component.LaserGun, this._code!.toUpperCase());
       this._gameVm.exec(code.getParsed(Component.LaserGun));
       ui!.removeChild(this._editorModal);
     });
@@ -47,7 +48,29 @@ export class Container extends ex.Scene {
     background.vel.setTo(-20, 0);
     engine.add(background);
     engine.add(new HealthBar());
+    engine.add(new EnergyBar());
     engine.add(new Scanner());
+    this.generateDocs();
+  }
+
+  private generateDocs() {
+    const docs = document.getElementById('docs');
+    docs!.innerText = `
+    Event data goes into the "DATA" register.
+    XEQ tests the event type (there is not +/i yet).
+    MOVX posts an event to the bus with the DATA register as payload.
+    SLP sleeps for N ms
+    ADD and SUB do aritmetic again the DATA register at a specified index
+
+
+    Sample program:
+      XEQ SCANNER
+      MOVX LASER
+      SLP 40
+      MOVX LASER
+      ADD 0 200
+      MOVX LASER
+      `;
   }
 
   onActivate() {

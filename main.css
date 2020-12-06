@@ -5,6 +5,7 @@
 
 #root {
   position: relative;
+  display: flex;
 }
 
 #root #ui {
@@ -13,6 +14,12 @@
   left: 0;
   width: 900;
   height: 1600;
+}
+
+#root #docs {
+  position: relative;
+  flex-grow: 1;
+  background-color: gray;
 }
 
 #ui .editor {
@@ -28,6 +35,7 @@
   padding: 10px;
   display: flex;
   flex-direction: row;
+  text-transform: uppercase;
 }
 
 #ui .editor .actualEditor {

@@ -3,10 +3,13 @@ import { Images } from '../resources';
 import { Ship } from './ship';
 import { stats } from '../stats';
 
-const random = (min: number, max: number) => Math.random() * (max - min) + min;
+const random = (min: number, range: number) => {
+  const randomInRange = Math.floor(Math.random() * range);
+  return min + randomInRange;
+}
 
 export class AsteroidField extends ex.Actor {
-  public spawnChance = 0.02;
+  public spawnChance = 0.10;
   public ySpread = 500;
 
   constructor() {
@@ -22,9 +25,9 @@ export class AsteroidField extends ex.Actor {
       engine.add(new Asteroid({
         pos: new ex.Vector(
           this.pos.x,
-          this.pos.y + random(-this.ySpread / 2, this.ySpread / 2),
+          this.pos.y + random(-500, 1000),
         ),
-        vel: new ex.Vector(random(-200, -100), random(-100, 100)),
+        vel: new ex.Vector(random(-200, 50), random(-10, 20)),
       }));
     }
   }
@@ -44,7 +47,7 @@ export class Asteroid extends ex.Actor {
     ...actorArgs
   }: AsteroidArgs) {
     super({
-      rx: rx || random(-2, 2),
+      rx: rx || random(-2, 4),
       body: new ex.Body({
         collider: new ex.Collider({
           shape: ex.Shape.Circle(texture.height / 2),
@@ -57,12 +60,21 @@ export class Asteroid extends ex.Actor {
     this.body.collider.bounciness = 0.8;
     this.addDrawing(texture);
     this.on('collisionstart', (c) => this.collision = c);
+
+    let hasAppeared = false;
+    this.on('enterviewport', () => {
+      hasAppeared = true;
+    });
+    this.on('exitviewport', () => {
+      hasAppeared && this.kill()
+    });
   }
 
   onImpact(engine: ex.Engine) {
-    const newVelX = (velX: number) => velX > -20 ? // head on dead stop
-      velX - random(50, 100) : velX;
-    const newVelY = (velY: number) => velY * random(-1.5, 3);
+    const newVelX = (velX: number) => velX > -20
+      ?  velX - random(50, 50)
+      : velX;
+    const newVelY = (velY: number) => velY * random(-1.5, 4.5);
 
     engine.add(new Asteroid({
       pos: this.pos,
@@ -88,14 +100,6 @@ export class Asteroid extends ex.Actor {
         stats.hp -= 10;
         this.onImpact(engine);
       }
-    }
-
-    if (
-      this.pos.x < 0 || this.pos.x > 5000 ||
-      this.pos.y < 0 || this.pos.y > 1200 ||
-      (Math.abs(this.vel.x) < 1 && Math.abs(this.vel.y) < 1)
-    ) {
-      return this.kill(); // remove if out of bounds or stalled
     }
   }
 }

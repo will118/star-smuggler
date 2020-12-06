@@ -3,6 +3,9 @@ const Config = {
   backgroundSpeed: 50, // 10 best for actual game
   bulletSize: 5,
   totalHp: 100,
+  totalEnergy: 1_000,
+  energyPerTick: 1,
+  energyPerShot: 50,
   healthBarHeight : 25,
   healthBarWidth : 400,
   // probably not safe to change but ideally should be able to
