@@ -8,14 +8,10 @@ const random = (min: number, range: number) => {
 }
 
 export class AsteroidField extends ex.Actor {
-  public spawnChance = 0.10;
-  public ySpread = 500;
-
+  public spawnChance = 0.02;
   constructor() {
     super({
-      // tracking ahead of ship off screen
-      pos: new ex.Vector(1920, 600),
-      vel: new ex.Vector(10, 0),
+      pos: new ex.Vector(1600, 450),
     });
   }
 
@@ -24,9 +20,9 @@ export class AsteroidField extends ex.Actor {
       engine.add(new Asteroid({
         pos: new ex.Vector(
           this.pos.x,
-          this.pos.y + random(-500, 1000),
+          this.pos.y + random(-450, 900),
         ),
-        vel: new ex.Vector(random(-200, 50), random(-10, 20)),
+        vel: new ex.Vector(random(-200, 100), random(-50, 100)),
       }));
     }
   }
@@ -45,6 +41,7 @@ export class Asteroid extends ex.Actor {
   }: AsteroidArgs) {
     super({
       rx: rx || random(-2, 4),
+      rotation: random(0, 2 * Math.PI),
       body: new ex.Body({
         collider: new ex.Collider({
           shape: ex.Shape.Circle(texture.height / 2),
@@ -59,10 +56,9 @@ export class Asteroid extends ex.Actor {
   }
 
   onInitialize(engine: ex.Engine) {
-    this.isOffScreen = true;
     this.on('collisionstart', this.onCollisionStart(engine));
     this.on('exitviewport', () => {
-      this.killImpl()
+      this.kill()
     });
   }
 
@@ -86,11 +82,7 @@ export class Asteroid extends ex.Actor {
       vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
     }));
 
-    return this.killImpl();
-  }
-
-  private killImpl() {
-    this.kill();
+    return this.kill();
   }
 
   private onCollisionStart(engine: ex.Engine) {
