@@ -1,7 +1,7 @@
 import * as ex from 'excalibur';
 import Config from '../config';
 import { bulletSheet } from '../resources';
-import { Asteroid } from './asteroid';
+
 
 export class Bullet extends ex.Actor {
   public owner?: ex.Actor;
@@ -12,12 +12,18 @@ export class Bullet extends ex.Actor {
       width: Config.bulletSize,
       height: Config.bulletSize,
     });
-    this.body.collider.type = ex.CollisionType.Passive;
+
+    this.body.collider.type = ex.CollisionType.Active;
+
+    if (owner?.body.collider.group) {
+      this.body.collider.group = owner.body.collider.group;
+    }
+
     this.owner = owner;
   }
 
   onInitialize(engine: ex.Engine) {
-    this.on('precollision', this.onPreCollision(engine));
+    this.on('collisionstart', this.onCollisionStart);
     this.on('exitviewport', () => this.kill());
 
     const anim = bulletSheet.getAnimationByIndices(engine, [3, 4, 5, 6, 7, 8, 7, 6, 5, 4], 100);
@@ -25,12 +31,9 @@ export class Bullet extends ex.Actor {
     this.addDrawing('default', anim);
   }
 
-  private onPreCollision(engine: ex.Engine) {
-    return (evt: ex.PreCollisionEvent) => {
-      if (evt.other instanceof Asteroid) {
-        evt.other.onImpact(engine);
-        this.kill();
-      }
+  private onCollisionStart(evt: ex.CollisionStartEvent) {
+    if (evt.other.body.collider.type !== ex.CollisionType.Passive) {
+      this.kill();
     }
   }
 }
