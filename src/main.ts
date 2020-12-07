@@ -22,8 +22,6 @@ const container = new Container(game, vm);
 game.addScene('container', container);
 game.goToScene('container');
 
-(<any>window).asteroidCount = { births: 0, deaths: 0 };
-
 game.start(loader).then(() => {
   game.add(ship);
   ship.on('pointerup', () => {

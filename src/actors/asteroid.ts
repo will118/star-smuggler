@@ -60,17 +60,15 @@ export class Asteroid extends ex.Actor {
 
   onInitialize(engine: ex.Engine) {
     this.isOffScreen = true;
-    (<any>window).asteroidCount.births += 1;
     this.on('collisionstart', this.onCollisionStart(engine));
     this.on('exitviewport', () => {
-      (<any>window).asteroidCount.deaths += 1;
-      this.kill()
+      this.killImpl()
     });
   }
 
   onImpact(engine: ex.Engine) {
     const newVelX = (velX: number) => velX > -20
-      ?  velX - random(50, 50)
+      ? velX - random(50, 50)
       : velX;
     const newVelY = (velY: number) => velY * random(-1.5, 4.5);
 
@@ -88,7 +86,11 @@ export class Asteroid extends ex.Actor {
       vel: new ex.Vector(newVelX(this.vel.x), newVelY(this.vel.y)),
     }));
 
-    return this.kill();
+    return this.killImpl();
+  }
+
+  private killImpl() {
+    this.kill();
   }
 
   private onCollisionStart(engine: ex.Engine) {
