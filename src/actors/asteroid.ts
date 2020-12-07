@@ -56,18 +56,16 @@ export class Asteroid extends ex.Actor {
 
     this.body.collider.bounciness = 0.8;
     this.addDrawing(texture);
-
-    let hasAppeared = false;
-    this.on('enterviewport', () => {
-      hasAppeared = true;
-    });
-    this.on('exitviewport', () => {
-      hasAppeared && this.kill()
-    });
   }
 
   onInitialize(engine: ex.Engine) {
+    this.isOffScreen = true;
+    (<any>window).asteroidCount.births += 1;
     this.on('collisionstart', this.onCollisionStart(engine));
+    this.on('exitviewport', () => {
+      (<any>window).asteroidCount.deaths += 1;
+      this.kill()
+    });
   }
 
   onImpact(engine: ex.Engine) {

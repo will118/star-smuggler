@@ -3,6 +3,7 @@ import { CodeJar } from 'codejar';
 import { Component, code } from './code';
 import { HealthBar } from './actors/healthbar';
 import { EnergyBar } from './actors/energybar';
+import { AsteroidField } from './actors/asteroid';
 import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
 import { GameVm } from './game-vm';
@@ -47,6 +48,7 @@ export class Container extends ex.Scene {
     const background = new Background();
     background.vel.setTo(-20, 0);
     engine.add(background);
+    engine.add(new AsteroidField());
     engine.add(new HealthBar());
     engine.add(new EnergyBar());
     engine.add(new Scanner());
