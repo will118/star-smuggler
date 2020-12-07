@@ -2,6 +2,7 @@ const Config = {
   playerBulletVelocity : -1_000,
   backgroundSpeed: 50, // 10 best for actual game
   bulletSize: 5,
+  bulletSpeed: 1_000,
   totalHp: 100,
   totalEnergy: 1_000,
   energyPerTick: 1,
@@ -13,7 +14,7 @@ const Config = {
   height: 900,
   components: {
     scanner: {
-      redetectionTickCount: 100,
+      redetectionTickCount: 1_000,
     },
   },
 }

@@ -38,7 +38,8 @@ export class Ship extends ex.Actor {
       const source = new ex.Vector(this.pos.x + 200, this.pos.y);
       const target = new ex.Vector(x, y);
       const dir = target.sub(source);
-      const bullet = new Bullet(source, dir, this);
+      const distance = dir.magnitude();
+      const bullet = new Bullet(source, dir.scale(Config.bulletSpeed/distance), this);
       Sounds.laserSound.play();
       engine.add(bullet);
     }
