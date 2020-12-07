@@ -1,7 +1,6 @@
 import * as ex from 'excalibur';
 import { Images } from '../resources';
 import { Ship } from './ship';
-import { stats } from '../stats';
 
 const random = (min: number, range: number) => {
   const randomInRange = Math.floor(Math.random() * range);
@@ -38,8 +37,6 @@ export interface AsteroidArgs extends ex.ActorArgs {
 }
 
 export class Asteroid extends ex.Actor {
-  public collision?: ex.GameEvent<ex.Actor, ex.Actor>;
-
   constructor({
     rx,
     collisionType = ex.CollisionType.Active,
@@ -59,7 +56,6 @@ export class Asteroid extends ex.Actor {
 
     this.body.collider.bounciness = 0.8;
     this.addDrawing(texture);
-    this.on('collisionstart', (c) => this.collision = c);
 
     let hasAppeared = false;
     this.on('enterviewport', () => {
@@ -68,6 +64,10 @@ export class Asteroid extends ex.Actor {
     this.on('exitviewport', () => {
       hasAppeared && this.kill()
     });
+  }
+
+  onInitialize(engine: ex.Engine) {
+    this.on('collisionstart', this.onCollisionStart(engine));
   }
 
   onImpact(engine: ex.Engine) {
@@ -93,13 +93,14 @@ export class Asteroid extends ex.Actor {
     return this.kill();
   }
 
-  onPostUpdate(engine: ex.Engine) {
-    if (this.collision) {
-      if (this.collision.other instanceof Ship) {
-        engine.currentScene.camera.shake(8, 8, 100);
-        stats.hp -= 10;
+  private onCollisionStart(engine: ex.Engine) {
+    return (evt: ex.CollisionStartEvent) => {
+      if (
+        evt.other.body.collider.type !== ex.CollisionType.Passive ||
+        evt.other instanceof Ship
+      ) {
         this.onImpact(engine);
       }
-    }
+    };
   }
 }
