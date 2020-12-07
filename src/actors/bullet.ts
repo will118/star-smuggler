@@ -5,10 +5,10 @@ import { bulletSheet } from '../resources';
 
 export class Bullet extends ex.Actor {
   public owner?: ex.Actor;
-  constructor(source: ex.Vector, vel: ex.Vector, owner?: ex.Actor) {
+  constructor(source: ex.Vector, dir: ex.Vector, owner?: ex.Actor) {
     super({
       pos: source,
-      vel: vel,
+      vel: dir.normalize().scale(Config.bulletSpeed),
       width: Config.bulletSize,
       height: Config.bulletSize,
     });
