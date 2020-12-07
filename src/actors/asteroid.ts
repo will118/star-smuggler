@@ -1,4 +1,5 @@
 import * as ex from 'excalibur';
+import { stats } from '../stats'
 import { Images } from '../resources';
 import { Ship } from './ship';
 
@@ -51,6 +52,7 @@ export class Asteroid extends ex.Actor {
       ...actorArgs
     });
 
+    stats.score += 1;
     this.body.collider.bounciness = 0.8;
     this.addDrawing(texture);
   }

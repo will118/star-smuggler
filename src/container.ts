@@ -6,6 +6,7 @@ import { EnergyBar } from './actors/energybar';
 import { AsteroidField } from './actors/asteroid';
 import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
+import { scoreLabel } from './actors/score';
 import { GameVm } from './game-vm';
 
 const ui = document.getElementById('ui');
@@ -52,6 +53,7 @@ export class Container extends ex.Scene {
     engine.add(new HealthBar());
     engine.add(new EnergyBar());
     engine.add(new Scanner());
+    engine.add(scoreLabel());
     this.generateDocs();
   }
 

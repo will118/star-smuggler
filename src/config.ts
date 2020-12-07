@@ -2,7 +2,7 @@ const Config = {
   playerBulletVelocity : -1_000,
   backgroundSpeed: 50, // 10 best for actual game
   bulletSize: 5,
-  bulletSpeed: 1_000,
+  bulletSpeed: 500,
   totalHp: 100,
   totalEnergy: 1_000,
   energyPerTick: 1,
