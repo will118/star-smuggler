@@ -17,6 +17,9 @@
 }
 
 #root #docs {
+  font-family: 'CodeFont', Fallback, sans-serif;
+  font-size: 28px;
+  padding: 20px;
   position: relative;
   flex-grow: 1;
   background-color: gray;

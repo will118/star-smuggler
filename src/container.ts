@@ -57,21 +57,39 @@ export class Container extends ex.Scene {
 
   private generateDocs() {
     const docs = document.getElementById('docs');
-    docs!.innerText = `
-    Event data goes into the "DATA" register.
-    XEQ tests the event type (there is not +/i yet).
-    MOVX posts an event to the bus with the DATA register as payload.
-    SLP sleeps for N ms
-    ADD and SUB do aritmetic again the DATA register at a specified index
+    docs!.innerHTML = `
+    <p>Event data goes into the "DATA" register.</p>
 
+    <p>
+      <b>XEQ</b> tests the event type (there is not +/i yet).
+    </p>
+    <p>
+      <b>MOVX</b> posts an event to the bus with the DATA register as payload.
+    </p>
+    <p>
+      <b>SLP</b> sleeps for N ms
+    </p>
+    <p>
+      <b>ADD</b> and <b>SUB</b> do aritmetic again the DATA register at a specified index
+    </p>
 
-    Sample program:
-      XEQ SCANNER
-      MOVX LASER
-      SLP 40
-      MOVX LASER
-      ADD 0 200
-      MOVX LASER
+    <br />
+    <br />
+
+    <p>Sample:</p>
+    <p>
+        XEQ SCANNER
+        <br />
+        MOVX LASER
+        <br />
+        SLP 40
+        <br />
+        MOVX LASER
+        <br />
+        ADD 0 200
+        <br />
+        MOVX LASER
+    </p>
       `;
   }
 
