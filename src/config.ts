@@ -13,7 +13,7 @@ const Config = {
   height: 900,
   components: {
     scanner: {
-      redetectionTickCount: 1_000,
+      redetectionTickCount: 100,
     },
   },
 }

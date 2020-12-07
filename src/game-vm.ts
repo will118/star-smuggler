@@ -38,38 +38,63 @@ export class GameVm {
 
   public exec(program: ProgramAst) {
     this.updateListener(async ([eventType, data]) => {
+      console.log(data);
       const env = new Environment(data);
+      const boundsCheck = (i: number) => {
+        if (i >= env.Data.length) {
+          throw new Error('Index out of range');
+        }
+      }
       const lines = [...program];
       let line = null;
       while (line = lines.shift()) {
         const [instruction, operands] = line;
         switch (instruction) {
-          case Instruction.XEQ:
+          case Instruction.XEQ: {
             const [awaitedEvtType] = operands;
             if (awaitedEvtType !== eventType) {
               return;
             }
             break;
-          case Instruction.SLP:
+          }
+          case Instruction.SLP: {
             const [ms] = operands;
             await sleep(ms);
             break;
-          case Instruction.MOVX:
+          }
+          case Instruction.MOVX: {
             const [evtType] = operands;
             this._eventStream.post([evtType, env.Data]);
             break;
-          case Instruction.ADD:
-          case Instruction.SUB:
+          }
+          case Instruction.ADD: {
             const [index, value] = operands;
-            if (index >= env.Data.length) {
-              throw new Error('Index out of range');
-            }
-            if (instruction === Instruction.ADD) {
-              env.Data[index] += value;
-            } else {
-              env.Data[index] -= value;
+            boundsCheck(index);
+            env.Data[index] += value;
+            break;
+          }
+          case Instruction.SUB: {
+            const [index, value] = operands;
+            boundsCheck(index);
+            env.Data[index] -= value;
+            break;
+          }
+          case Instruction.RLT: {
+            const [index, value] = operands;
+            boundsCheck(index);
+            if (env.Data[index] < value) {
+              return;
             }
             break;
+          }
+          case Instruction.RGT: {
+            const [index, value] = operands;
+            boundsCheck(index);
+            if (env.Data[index] > value) {
+              return;
+            }
+            break;
+          }
         }
       }
     });

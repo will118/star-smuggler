@@ -72,6 +72,9 @@ export class Container extends ex.Scene {
     <p>
       <b>ADD</b> and <b>SUB</b> do aritmetic again the DATA register at a specified index
     </p>
+    <p>
+      <b>RGT</b> and <b>RLT</b> compare an index of the DATA register and return early
+    </p>
 
     <br />
     <br />

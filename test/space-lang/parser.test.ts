@@ -21,3 +21,11 @@ test('parses sub/add', t => {
       [Instruction.ADD, [2, 10]],
     ]);
 });
+
+test('parses RLT', t => {
+  t.deepEqual(
+    parse('RLT 1 400'),
+    [
+      [Instruction.RLT, [1, 400]],
+    ]);
+});

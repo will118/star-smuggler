@@ -6,6 +6,8 @@ export enum Instruction {
   SLP = 'SLP',
   ADD = 'ADD',
   SUB = 'SUB',
+  RLT = 'RLT',
+  RGT = 'RGT',
 }
 
 enum Register {
@@ -55,6 +57,8 @@ export const parse = (text: string): ProgramAst => {
       case Instruction.SLP:
       case Instruction.SUB:
       case Instruction.ADD:
+      case Instruction.RLT:
+      case Instruction.RGT:
         inst = name;
         break;
       default:
