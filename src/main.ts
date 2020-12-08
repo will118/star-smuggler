@@ -25,7 +25,10 @@ game.goToScene('container');
 game.start(loader).then(() => {
   game.add(ship);
   ship.on('pointerup', () => {
-    container.openEditor();
+    container.openEditor(() => {
+      game.start();
+    });
+    game.stop();
   });
   // game.isDebug = true;
 })

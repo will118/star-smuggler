@@ -12,6 +12,7 @@ import { GameVm } from './game-vm';
 const ui = document.getElementById('ui');
 
 export class Container extends ex.Scene {
+  private _onComplete: (() => void) | null = null;
   private _gameVm: GameVm;
   private _editorModal: HTMLDivElement;
   private _editor: HTMLDivElement;
@@ -40,6 +41,7 @@ export class Container extends ex.Scene {
       code.updateScript(Component.LaserGun, this._code!.toUpperCase());
       this._gameVm.exec(code.getParsed(Component.LaserGun));
       ui!.removeChild(this._editorModal);
+      this._onComplete!();
     });
 
     buttons.appendChild(button);
@@ -108,7 +110,8 @@ export class Container extends ex.Scene {
     });
   }
 
-  openEditor() {
+  openEditor(onComplete: () => void) {
+    this._onComplete = onComplete;
     ui!.appendChild(this._editorModal);
   }
 
