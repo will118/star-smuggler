@@ -3,14 +3,17 @@ import Config from '../../config';
 import { Component } from './component';
 import { Asteroid } from '../asteroid';
 import { EventType, eventStream } from './event-stream';
+import { position, Horizontal, Vertical } from '../../position';
 
 export class Scanner extends Component {
   private _bogeys: Map<Asteroid, number>;
 
   constructor() {
+    const [x,y] = position(Vertical.Middle, Horizontal.Left);
+
     super({
-      x: 250,
-      y: 450,
+      x: x,
+      y: y,
       body: new ex.Body({
         collider: new ex.Collider({
           shape: ex.Shape.Circle(900),

@@ -92,13 +92,13 @@ export class Container extends ex.Scene {
     <p>
         XEQ SCANNER
         <br />
-        MOVX LASER
+        RLT 0 300
         <br />
-        SLP 40
+        RGT 0 800
         <br />
-        MOVX LASER
+        RLT 1 -300
         <br />
-        ADD 0 200
+        RGT 1 300
         <br />
         MOVX LASER
     </p>
