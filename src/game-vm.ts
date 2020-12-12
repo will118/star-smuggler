@@ -66,6 +66,11 @@ export class GameVm {
             this._eventStream.post([evtType, env.Data]);
             break;
           }
+          case Instruction.SET: {
+            const [index, value] = operands;
+            env.Data[index] = value;
+            break;
+          }
           case Instruction.ADD: {
             const [index, value] = operands;
             boundsCheck(index);
