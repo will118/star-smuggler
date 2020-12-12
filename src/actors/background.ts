@@ -1,5 +1,6 @@
 import * as ex from 'excalibur';
 import { Images } from '../resources';
+import { position, Horizontal, Vertical } from '../position';
 import Config from '../config';
 
 const BG_HEIGHT = 540;
@@ -31,9 +32,10 @@ class BackgroundCell extends ex.Actor {
 
 export class Background extends ex.Actor {
   constructor() {
+    const [x,y] = position(Vertical.Top, Horizontal.Left);
     super({
-      x: 0,
-      y: 0,
+      x,
+      y,
       height: Config.height * 2, // why x2..
       width: Config.width * 2,
     });

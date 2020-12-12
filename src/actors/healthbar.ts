@@ -1,5 +1,6 @@
 import * as ex from 'excalibur';
 import Config from '../config';
+import { position, Horizontal, Vertical } from '../position';
 import { stats } from '../stats';
 
 export class HealthBar extends ex.Actor {
@@ -15,9 +16,11 @@ export class HealthBar extends ex.Actor {
     this.body.collider.type = ex.CollisionType.PreventCollision;
   }
 
-  onInitialize(engine: ex.Engine) {
-    this.pos = new ex.Vector(20,
-      engine.drawHeight - Config.healthBarHeight - 20);
+  onInitialize(_engine: ex.Engine) {
+    const [x,y] = position(Vertical.Bottom, Horizontal.Left);
+    this.pos = new ex.Vector(
+      x + 20,
+      y - Config.healthBarHeight - 20);
     this.width = Config.healthBarWidth;
     this.height = Config.healthBarHeight;
 

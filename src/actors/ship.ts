@@ -4,14 +4,16 @@ import { Sounds } from '../resources';
 import { Asteroid } from './asteroid';
 import { Bullet } from './bullet';
 import { stats } from '../stats';
+import { position, Horizontal, Vertical } from '../position';
 
 export const shipCollisionGroup = ex.CollisionGroupManager.create('ship');
 
 export class Ship extends ex.Actor {
   constructor() {
+    const [x,y] = position(Vertical.Middle, Horizontal.Left);
     super({
-      x: 250,
-      y: 450,
+      x: x + 225,
+      y,
       body: new ex.Body({
         collider: new ex.Collider({
           shape: ex.Shape.Polygon([

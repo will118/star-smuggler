@@ -4,6 +4,7 @@ import { Component, code } from './code';
 import { HealthBar } from './actors/healthbar';
 import { EnergyBar } from './actors/energybar';
 import { AsteroidField } from './actors/asteroid';
+import { position, Horizontal, Vertical } from './position';
 import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
 import { scoreLabel } from './actors/score';
@@ -38,7 +39,7 @@ export class Container extends ex.Scene {
     button.innerText = 'Save';
 
     button.addEventListener('click', () => {
-      code.updateScript(Component.LaserGun, this._code!.toUpperCase());
+      code.updateScript(Component.LaserGun, (this._code! || '').toUpperCase());
       this._gameVm.exec(code.getParsed(Component.LaserGun));
       ui!.removeChild(this._editorModal);
       this._onComplete!();
@@ -48,6 +49,10 @@ export class Container extends ex.Scene {
   }
 
   onInitialize(engine: ex.Engine) {
+    const [x,y] = position(Vertical.Middle, Horizontal.Middle);
+    engine.currentScene.camera.x = x;
+    engine.currentScene.camera.y = y;
+
     const background = new Background();
     background.vel.setTo(-20, 0);
     engine.add(background);
