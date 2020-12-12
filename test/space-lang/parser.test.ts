@@ -29,3 +29,11 @@ test('parses RLT', t => {
       [Instruction.RLT, [1, 400]],
     ]);
 });
+
+test('parses negative RLT', t => {
+  t.deepEqual(
+    parse('RLT 1 -400'),
+    [
+      [Instruction.RLT, [1, -400]],
+    ]);
+});

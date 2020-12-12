@@ -74,7 +74,7 @@ export const parse = (text: string): ProgramAst => {
           case '\n':
             return ops;
           default:
-            if (isDigit(c)) {
+            if (isDigit(c) || c === '-') {
               while (isDigit(peek())) {
                 advance();
               }
