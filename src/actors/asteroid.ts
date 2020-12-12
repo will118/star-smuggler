@@ -2,7 +2,7 @@ import * as ex from 'excalibur';
 import { stats } from '../stats'
 import { position, Horizontal, Vertical } from '../position';
 import { Images } from '../resources';
-import { Ship } from './ship';
+import { PlayerShip } from './ship';
 
 const random = (max: number) => Math.random() * max;
 
@@ -11,14 +11,16 @@ const randomNegOrPos = (range: number) => {
 }
 
 export class AsteroidField extends ex.Actor {
+  public shouldSpawn: boolean = true;
+
   constructor() {
+    super();
     const [x,y] = position(Vertical.Middle, Horizontal.Right)
-    super({
-      pos: new ex.Vector(x, y),
-    });
+    this.pos.setTo(x, y);
   }
 
   onPostUpdate(engine: ex.Engine) {
+    if (!this.shouldSpawn) return;
     const spawnChance = 0.02;
 
     if (Math.random() < spawnChance) {
@@ -95,7 +97,7 @@ export class Asteroid extends ex.Actor {
     return (evt: ex.CollisionStartEvent) => {
       if (
         evt.other.body.collider.type !== ex.CollisionType.Passive ||
-        evt.other instanceof Ship
+        evt.other instanceof PlayerShip
       ) {
         this.onImpact(engine);
       }

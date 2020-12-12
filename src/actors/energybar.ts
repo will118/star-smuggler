@@ -17,9 +17,9 @@ export class EnergyBar extends ex.Actor {
   }
 
   onInitialize(_engine: ex.Engine) {
-    const [x,y] = position(Vertical.Bottom, Horizontal.Middle);
+    const [x,y] = position(Vertical.Bottom, Horizontal.Left);
     this.pos = new ex.Vector(
-      x + Config.healthBarWidth - 20,
+      x + 20,
       y - Config.healthBarHeight - 20);
     this.width = Config.healthBarWidth;
     this.height = Config.healthBarHeight;
@@ -39,8 +39,6 @@ export class EnergyBar extends ex.Actor {
     ctx.strokeStyle = this.color.toString();
     ctx.fillStyle = this.color.toString();
     ctx.lineWidth = 3;
-    ctx.font = 'normal 30px sans-serif'
-    ctx.fillText("ENERGY:", -5, - this.height);
     ctx.strokeRect(-5, -5, Config.healthBarWidth + 10, this.height + 10);
   }
 }

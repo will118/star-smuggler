@@ -1,7 +1,7 @@
 import * as ex from 'excalibur';
 import Config from '../config';
+import { Ship } from './ship';
 import { bulletSheet } from '../resources';
-
 
 export class Bullet extends ex.Actor {
   public owner?: ex.Actor;
@@ -13,7 +13,7 @@ export class Bullet extends ex.Actor {
       height: Config.bulletSize,
     });
 
-    this.body.collider.type = ex.CollisionType.Active;
+    this.body.collider.type = ex.CollisionType.Passive;
 
     if (owner?.body.collider.group) {
       this.body.collider.group = owner.body.collider.group;
@@ -32,7 +32,13 @@ export class Bullet extends ex.Actor {
   }
 
   private onCollisionStart(evt: ex.CollisionStartEvent) {
-    if (evt.other.body.collider.type !== ex.CollisionType.Passive) {
+    if (evt.other instanceof Bullet) {
+      return;
+    }
+
+    if (evt.other instanceof Ship) {
+      this.kill();
+    } else if (evt.other.body.collider.type !== ex.CollisionType.Passive) {
       this.kill();
     }
   }

@@ -1,6 +1,6 @@
 import * as ex from 'excalibur';
 import { loader } from './resources';
-import { Ship } from './actors/ship';
+import { PlayerShip } from './actors/ship';
 import { Container } from './container';
 import { Grid } from './actors/grid';
 import { GameVm } from './game-vm';
@@ -14,7 +14,7 @@ const game = new ex.Engine({
   width: Config.width
 });
 
-const ship = new Ship();
+const ship = new PlayerShip();
 
 const vm = new GameVm(eventStream, (x, y) => ship.fireGun(game, x, y));
 console.log('Game VM started: ', vm);

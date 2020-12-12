@@ -9,14 +9,14 @@ export class Scanner extends Component {
   private _bogeys: Map<Asteroid, number>;
 
   constructor() {
-    const [x,y] = position(Vertical.Middle, Horizontal.Left);
+    const [x,y] = position(Vertical.Middle, Horizontal.Middle);
 
     super({
-      x: x,
+      x: x - (Config.width / 10),
       y: y,
       body: new ex.Body({
         collider: new ex.Collider({
-          shape: ex.Shape.Circle(900),
+          shape: ex.Shape.Box(Config.width - (Config.width / 10), Config.height / 1.25),
           type: ex.CollisionType.Passive,
         })
       }),

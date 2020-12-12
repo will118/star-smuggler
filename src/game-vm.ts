@@ -38,6 +38,7 @@ export class GameVm {
 
   public exec(program: ProgramAst) {
     this.updateListener(async ([eventType, data]) => {
+      console.log(data);
       const env = new Environment(data);
       const boundsCheck = (i: number) => {
         if (i >= env.Data.length) {

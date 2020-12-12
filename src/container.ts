@@ -1,7 +1,7 @@
 import * as ex from 'excalibur';
 import { CodeJar } from 'codejar';
 import { Component, code } from './code';
-import { HealthBar } from './actors/healthbar';
+import { PlayerHealthBar } from './actors/healthbar';
 import { EnergyBar } from './actors/energybar';
 import { AsteroidField } from './actors/asteroid';
 import { position, Horizontal, Vertical } from './position';
@@ -9,6 +9,9 @@ import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
 import { scoreLabel } from './actors/score';
 import { GameVm } from './game-vm';
+import { stats } from './stats';
+import { enemy1 } from './actors/enemy';
+import Config from './config';
 
 const ui = document.getElementById('ui');
 
@@ -56,12 +59,33 @@ export class Container extends ex.Scene {
     const background = new Background();
     background.vel.setTo(-20, 0);
     engine.add(background);
-    engine.add(new AsteroidField());
-    engine.add(new HealthBar());
+    const asteroidField = new AsteroidField();
+    engine.add(asteroidField);
+    engine.add(new PlayerHealthBar());
     engine.add(new EnergyBar());
     engine.add(new Scanner());
     engine.add(scoreLabel());
     this.generateDocs();
+
+    let gameOverLabelAdded = false;
+    let enemy1Added = false;
+
+    engine.on('preupdate', () => {
+      if (!enemy1Added && stats.score > Config.enemyTrigger) {
+        enemy1Added = true;
+        asteroidField.shouldSpawn = false;
+        engine.add(enemy1(engine, () => { asteroidField.shouldSpawn = true }));
+      }
+
+      if (!gameOverLabelAdded && stats.gameOver()) {
+        const [x,y] = position(Vertical.Middle, Horizontal.Middle);
+        const gameOverLabel = new ex.Label("YOU LOSE", x - 300, y - 20);
+        gameOverLabel.color = ex.Color.White.clone();
+        gameOverLabel.scale = new ex.Vector(12, 12);
+        engine.add(gameOverLabel);
+        gameOverLabelAdded = true;
+      }
+    });
   }
 
   private generateDocs() {
