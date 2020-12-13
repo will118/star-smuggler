@@ -1,10 +1,11 @@
 import * as ex from 'excalibur';
 import { CodeJar } from 'codejar';
-import { Component, code } from './code';
+import { CodeComponent, code } from './code';
 import { PlayerHealthBar } from './actors/healthbar';
 import { EnergyBar } from './actors/energybar';
 import { AsteroidField } from './actors/asteroid';
 import { position, Horizontal, Vertical } from './position';
+import { eventStream } from './actors/ship-components/event-stream';
 import { Background } from './actors/background';
 import { Scanner } from './actors/ship-components/scanner';
 import { scoreLabel } from './actors/score';
@@ -12,21 +13,21 @@ import { GameVm } from './game-vm';
 import { stats } from './stats';
 import { enemy1 } from './actors/enemy';
 import { generateDocs } from './docs';
+import { PlayerShip } from './actors/ship';
+import { Grid } from './actors/grid';
 import Config from './config';
 
 const ui = document.getElementById('ui');
 
 export class Container extends ex.Scene {
   private _onComplete: (() => void) | null = null;
-  private _gameVm: GameVm;
+  private _gameVm: GameVm | null = null;
   private _editorModal: HTMLDivElement;
   private _editor: HTMLDivElement;
   private _code: string | null = null;
 
-  constructor(engine: ex.Engine, gameVm: GameVm) {
+  constructor(engine: ex.Engine) {
     super(engine);
-
-    this._gameVm = gameVm;
 
     this._editorModal = document.createElement('div');
     this._editorModal.className = 'editor';
@@ -43,8 +44,8 @@ export class Container extends ex.Scene {
     button.innerText = 'SAVE';
 
     button.addEventListener('click', () => {
-      code.updateScript(Component.LaserGun, (this._code! || '').toUpperCase());
-      this._gameVm.exec(code.getParsed(Component.LaserGun));
+      code.updateScript(CodeComponent.LaserGun, (this._code! || '').toUpperCase());
+      this._gameVm!.exec(code.getParsed(CodeComponent.LaserGun));
       ui!.removeChild(this._editorModal);
       this._onComplete!();
     });
@@ -89,6 +90,24 @@ export class Container extends ex.Scene {
         gameOverLabelAdded = true;
       }
     });
+
+    const grid = new Grid();
+    const ship = new PlayerShip((_component: CodeComponent) => {
+      this.openEditor(() => {
+        engine.remove(grid);
+        engine.start();
+      });
+      engine.add(grid);
+      engine.stop();
+    });
+    engine.add(ship);
+
+    this._gameVm = new GameVm(
+      eventStream,
+      (x, y) => ship.fireGun(engine, x, y),
+      () => ship.toggleShield(engine));
+
+    console.log('Game VM started: ', this._gameVm);
   }
 
   private generateDocs() {
@@ -99,7 +118,7 @@ export class Container extends ex.Scene {
   onActivate() {
     const highlight = (_editor: HTMLElement) => {}
     const jar = CodeJar(this._editor, highlight, { tab: '  ' });
-    this._code = code.getScript(Component.LaserGun);
+    this._code = code.getScript(CodeComponent.LaserGun);
     jar.updateCode(this._code);
 
     jar.onUpdate(code => {

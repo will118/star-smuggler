@@ -1,11 +1,7 @@
 import * as ex from 'excalibur';
 import { loader } from './resources';
-import { PlayerShip } from './actors/ship';
 import { Container } from './container';
-import { Grid } from './actors/grid';
-import { GameVm } from './game-vm';
 import Config from './config';
-import { eventStream } from './actors/ship-components/event-stream';
 
 const game = new ex.Engine({
   canvasElementId: 'game',
@@ -14,30 +10,11 @@ const game = new ex.Engine({
   width: Config.width
 });
 
-const ship = new PlayerShip();
-
-const vm = new GameVm(
-  eventStream,
-  (x, y) => ship.fireGun(game, x, y),
-  () => ship.toggleShield(game));
-console.log('Game VM started: ', vm);
-
-const container = new Container(game, vm);
+const container = new Container(game);
 
 game.addScene('container', container);
 game.goToScene('container');
 
-const grid = new Grid();
-
 game.start(loader).then(() => {
-  game.add(ship);
-  ship.on('pointerup', () => {
-    container.openEditor(() => {
-      game.remove(grid);
-      game.start();
-    });
-    game.add(grid);
-    game.stop();
-  });
   // game.isDebug = true;
 })

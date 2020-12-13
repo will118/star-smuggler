@@ -1,20 +1,20 @@
 import { ProgramAst, parse } from './space-lang/parser';
 
-export enum Component {
+export enum CodeComponent {
   LaserGun = "LaserGun"
 }
 
 class Code {
-  updateScript(component: Component, script: string) {
+  updateScript(component: CodeComponent, script: string) {
     window.localStorage.setItem(component, script);
   }
 
-  getScript(component: Component): string {
+  getScript(component: CodeComponent): string {
     const code = window.localStorage.getItem(component);
     return code || '';
   }
 
-  getParsed(component: Component): ProgramAst {
+  getParsed(component: CodeComponent): ProgramAst {
     return parse(this.getScript(component));
   }
 }

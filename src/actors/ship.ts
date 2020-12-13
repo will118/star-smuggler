@@ -1,5 +1,6 @@
 import * as ex from 'excalibur';
 import Config from '../config';
+import { CodeComponent } from '../code';
 import { Sounds } from '../resources';
 import { Asteroid } from './asteroid';
 import { HealthStats } from './healthbar';
@@ -36,8 +37,9 @@ export const shipCollisionGroup = ex.CollisionGroupManager.create('ship');
 
 export class PlayerShip extends Ship {
   protected _stats: HealthStats = stats;
+  private _onComponentClick: (component: CodeComponent) => void;
 
-  constructor() {
+  constructor(onComponentClick: (component: CodeComponent) => void) {
     super({
       color: ex.Color.Chartreuse,
       body: new ex.Body({
@@ -54,9 +56,16 @@ export class PlayerShip extends Ship {
       }),
     });
 
+    this._onComponentClick = onComponentClick;
+
     const [x,y] = position(Vertical.Middle, Horizontal.Left);
     this.pos.x = x + 225;
     this.pos.y = y;
+  }
+
+  onInitialize(engine: ex.Engine) {
+    super.onInitialize(engine);
+    this.on('pointerup', () => { this._onComponentClick(CodeComponent.LaserGun) });
   }
 
   private tryTakeEnergy(amount: number) {
