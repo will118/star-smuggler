@@ -3,6 +3,7 @@ import { stats } from '../stats'
 import { position, Horizontal, Vertical } from '../position';
 import { Images } from '../resources';
 import { PlayerShip } from './ship';
+import { Shield } from './shield';
 
 const random = (max: number) => Math.random() * max;
 
@@ -97,7 +98,8 @@ export class Asteroid extends ex.Actor {
     return (evt: ex.CollisionStartEvent) => {
       if (
         evt.other.body.collider.type !== ex.CollisionType.Passive ||
-        evt.other instanceof PlayerShip
+        evt.other instanceof PlayerShip ||
+        evt.other instanceof Shield
       ) {
         this.onImpact(engine);
       }

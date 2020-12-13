@@ -1,5 +1,6 @@
 import { Listener, EventStream } from './actors/ship-components/event-stream';
 import { Laser } from './actors/ship-components/laser';
+import { Shield } from './actors/ship-components/shield';
 import { Component } from './actors/ship-components/component';
 import { PlainComponent } from './actors/ship-components/plain-component';
 import { ProgramAst, Instruction } from './space-lang/parser';
@@ -22,9 +23,12 @@ export class GameVm {
   private _eventStream: EventStream;
   private _removeListener: (() => void) | null = null;
 
-  constructor(eventStream: EventStream, fireLaser: (x: number, y: number) => void) {
+  constructor(
+    eventStream: EventStream,
+    fireLaser: (x: number, y: number) => void,
+    toggleShield: () => void) {
     this._eventStream = eventStream;
-    this.addComponents(eventStream, fireLaser);
+    this.addComponents(eventStream, fireLaser, toggleShield);
   }
 
   private updateListener(f: Listener) {
@@ -32,13 +36,16 @@ export class GameVm {
     this._removeListener = this._eventStream.addListener(f);
   }
 
-  private addComponents(eventStream: EventStream, fireLaser: (x: number, y: number) => void) {
+  private addComponents(
+    eventStream: EventStream,
+    fireLaser: (x: number, y: number) => void,
+    toggleShield: () => void) {
     this._components.push(new Laser(eventStream, fireLaser));
+    this._components.push(new Shield(eventStream, toggleShield));
   }
 
   public exec(program: ProgramAst) {
     this.updateListener(async ([eventType, data]) => {
-      console.log(data);
       const env = new Environment(data);
       const boundsCheck = (i: number) => {
         if (i >= env.Data.length) {

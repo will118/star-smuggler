@@ -1,6 +1,7 @@
 import * as ex from 'excalibur';
 import Config from '../config';
 import { Ship } from './ship';
+import { Shield } from './shield';
 import { bulletSheet } from '../resources';
 
 export class Bullet extends ex.Actor {
@@ -36,10 +37,13 @@ export class Bullet extends ex.Actor {
       return;
     }
 
-    if (evt.other instanceof Ship) {
+    if (evt.other instanceof Ship || evt.other instanceof Shield) {
       this.kill();
     } else if (evt.other.body.collider.type !== ex.CollisionType.Passive) {
       this.kill();
     }
   }
 }
+
+export class EnemyBullet extends Bullet {}
+export class PlayerBullet extends Bullet {}

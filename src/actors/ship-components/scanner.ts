@@ -2,11 +2,12 @@ import * as ex from 'excalibur';
 import Config from '../../config';
 import { Component } from './component';
 import { Asteroid } from '../asteroid';
+import { EnemyBullet } from '../bullet';
 import { EventType, eventStream } from './event-stream';
 import { position, Horizontal, Vertical } from '../../position';
 
 export class Scanner extends Component {
-  private _bogeys: Map<Asteroid, number>;
+  private _bogeys: Map<ex.Actor, number>;
 
   constructor() {
     const [x,y] = position(Vertical.Middle, Horizontal.Middle);
@@ -21,7 +22,7 @@ export class Scanner extends Component {
         })
       }),
     });
-    this._bogeys = new Map<Asteroid, number>();
+    this._bogeys = new Map<ex.Actor, number>();
   }
 
   onInitialize(engine: ex.Engine) {
@@ -39,13 +40,24 @@ export class Scanner extends Component {
     })
   }
 
+  private scannerBogeyType(actor: ex.Actor) {
+    if (actor instanceof Asteroid) {
+      return 0;
+    } else if (actor instanceof EnemyBullet) {
+      return 1;
+    }
+    throw new Error('Unsupported bogey type');
+  }
+
   private onPreCollision(_engine: ex.Engine) {
     return (evt: ex.PreCollisionEvent) => {
-      if (evt.other instanceof Asteroid) {
-        const asteroid: Asteroid = evt.other;
-        if (!this._bogeys.has(asteroid)) {
-          this._bogeys.set(asteroid, 0);
-          eventStream.post([EventType.Scanner, [evt.other.pos.x, evt.other.pos.y]]);
+      if (evt.other instanceof Asteroid || evt.other instanceof EnemyBullet) {
+        if (!this._bogeys.has(evt.other)) {
+          this._bogeys.set(evt.other, 0);
+          eventStream.post([
+            EventType.Scanner,
+            [evt.other.pos.x, evt.other.pos.y, this.scannerBogeyType(evt.other)]
+          ]);
         }
       }
     }

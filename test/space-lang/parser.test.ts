@@ -13,6 +13,14 @@ test('parses basic operation', t => {
     ]);
 });
 
+test('parses event with underscore', t => {
+  t.deepEqual(
+    parse('XEQ SHIELD_HIT'),
+    [
+      [Instruction.XEQ, [EventType.ShieldHit]],
+    ]);
+});
+
 test('parses sub/add', t => {
   t.deepEqual(
     parse('SUB 0 10\nADD 2 10'),

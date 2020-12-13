@@ -16,7 +16,10 @@ const game = new ex.Engine({
 
 const ship = new PlayerShip();
 
-const vm = new GameVm(eventStream, (x, y) => ship.fireGun(game, x, y));
+const vm = new GameVm(
+  eventStream,
+  (x, y) => ship.fireGun(game, x, y),
+  () => ship.toggleShield(game));
 console.log('Game VM started: ', vm);
 
 const container = new Container(game, vm);

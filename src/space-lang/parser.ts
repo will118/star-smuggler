@@ -1,4 +1,4 @@
-import { EventType, EventTypeLookup } from '../actors/ship-components/event-stream';
+import { EventType } from '../actors/ship-components/event-stream';
 
 export enum Instruction {
   XEQ = 'XEQ',
@@ -11,6 +11,86 @@ export enum Instruction {
   SET = 'SET',
 }
 
+enum ReadWrite {
+  Read = 'Read',
+  Write = 'Write',
+  ReadWrite = 'Read/Write'
+}
+
+type OperandDocs = {
+  help: string;
+  args: Array<string>;
+  io: ReadWrite
+}
+
+export const EventTypeLookup: { [key: string]: { type: EventType } & OperandDocs } = {
+  SCANNER: {
+    type: EventType.Scanner,
+    args: ['X', 'Y', 'T'],
+    help: 'Bogey detected. T: 0 = Asteroid, 1 = Laser',
+    io: ReadWrite.Read
+  },
+  LASER: {
+    type: EventType.Laser,
+    args: ['X', 'Y'],
+    help: 'Fires laser',
+    io: ReadWrite.Write
+  },
+  SHIELD_TOGGLE: {
+    type: EventType.ShieldToggle,
+    args: [],
+    help: 'Toggles shield on/off',
+    io: ReadWrite.Write
+  },
+  SHIELD_HIT: {
+    type: EventType.ShieldHit,
+    args: [],
+    help: 'Shield hit',
+    io: ReadWrite.Read
+  }
+};
+
+
+type Documentation = {
+  help: string,
+  example: string
+}
+
+export const InstructionDocs: { [key in Instruction]: Documentation } = {
+  XEQ: {
+    help: 'tests the event type, continues if matching',
+    example: 'XEQ SHIELD_HIT'
+  },
+  MOVX: {
+    help: 'posts an event to the bus with the DATA register as payload',
+    example: 'MOVX LASER'
+  },
+  SLP: {
+    help: 'sleeps for N ms',
+    example: 'SLP 500'
+  },
+  ADD: {
+    help: 'adds a value to a specified index of the DATA register',
+    example: 'ADD 0 500',
+  },
+  SUB: {
+    help: 'subtracts a value from a specified index of the DATA register',
+    example: 'SUB 0 500',
+  },
+  SET: {
+    help: 'sets the value of a specified index of the DATA register',
+    example: 'SET 1 225',
+  },
+  RLT: {
+    help: 'returns if value at index is less than supplied value',
+    example: 'RLT 1 540',
+  },
+  RGT: {
+    help: 'returns if value at index is greater than supplied value',
+    example: 'RGT 1 100',
+  }
+};
+
 enum Register {
   R1,
   R2,
@@ -22,7 +102,7 @@ type Operands = Array<EventType | number | Register>;
 export type ProgramAst = Array<[Instruction, Operands]>;
 
 const isAlpha = (c: string) => {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
 const isDigit = (c: string) => {
@@ -88,7 +168,7 @@ export const parse = (text: string): ProgramAst => {
               const eventName = text.slice(start, current);
               const eventType = EventTypeLookup[eventName];
               if (eventType !== undefined) {
-                ops.push(eventType);
+                ops.push(eventType.type);
               } else {
                 throw new Error('Unsupported event type: ' + eventName);
               }

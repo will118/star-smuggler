@@ -39,7 +39,8 @@ class HealthBar extends ex.Actor {
   }
 
   onPreUpdate() {
-    this.width = Config.healthBarWidth * (this._stats.hp / this._stats.max);
+    const hp = this._stats.hp < 0 ? 0 : this._stats.hp;
+    this.width = Config.healthBarWidth * (hp / this._stats.max);
   }
 
   onPostDraw(ctx: CanvasRenderingContext2D) {

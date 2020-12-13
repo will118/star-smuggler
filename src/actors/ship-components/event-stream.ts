@@ -1,12 +1,9 @@
 export enum EventType {
   Scanner,
-  Laser
+  Laser,
+  ShieldHit,
+  ShieldToggle,
 }
-
-export const EventTypeLookup: { [key: string]: EventType } = {
-  SCANNER: EventType.Scanner,
-  LASER: EventType.Laser,
-};
 
 export type ShipEvent = [EventType, Array<number>];
 
