@@ -1,23 +1,18 @@
 import * as ex from 'excalibur';
 import { stats } from '../stats'
-import { position, Horizontal, Vertical } from '../position';
+import { Horizontals, Verticals } from '../position';
 import { Images } from '../resources';
 import { PlayerShip } from './ship';
-import { Shield } from './shield';
 
-const random = (max: number) => Math.random() * max;
-
-const randomNegOrPos = (range: number) => {
-  return random(range) * (Math.round(Math.random()) ? 1 : -1)
-}
+const random = (min: number, max: number) => Math.random() * (max - min) + min;
 
 export class AsteroidField extends ex.Actor {
   public shouldSpawn: boolean = true;
 
   constructor() {
-    super();
-    const [x,y] = position(Vertical.Middle, Horizontal.Right)
-    this.pos.setTo(x, y);
+    super({
+      pos: new ex.Vector(Horizontals.Right, Verticals.Middle),
+    });
   }
 
   onPostUpdate(engine: ex.Engine) {
@@ -28,9 +23,9 @@ export class AsteroidField extends ex.Actor {
       engine.add(new Asteroid({
         pos: new ex.Vector(
           this.pos.x,
-          this.pos.y + randomNegOrPos(450),
+          random(Verticals.Top, Verticals.Bottom),
         ),
-        vel: new ex.Vector(random(-200), randomNegOrPos(50)),
+        vel: new ex.Vector(random(-200, -100), random(-50, 50)),
       }));
     }
   }
@@ -48,8 +43,8 @@ export class Asteroid extends ex.Actor {
     ...actorArgs
   }: AsteroidArgs) {
     super({
-      rx: rx || randomNegOrPos(2),
-      rotation: random(2 * Math.PI),
+      rx: rx || random(-2, 2),
+      rotation: random(0, 2 * Math.PI),
       body: new ex.Body({
         collider: new ex.Collider({
           shape: ex.Shape.Circle(texture.height / 2),
@@ -73,9 +68,9 @@ export class Asteroid extends ex.Actor {
 
   onImpact(engine: ex.Engine) {
     const newVelX = (velX: number) => velX > -20
-      ? velX - (random(50) + 50)
+      ? velX - random(50, 100)
       : velX;
-    const newVelY = (velY: number) => velY * randomNegOrPos(1.5);
+    const newVelY = (velY: number) => velY * random(-2, 2);
 
     engine.add(new Asteroid({
       pos: this.pos,
