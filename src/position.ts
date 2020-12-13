@@ -1,45 +1,33 @@
+// import * as ex from 'excalibur';
+
 import Config from './config';
 
 export enum Vertical {
-  Top,
-  Middle,
-  Bottom
+  Top = 'Top',
+  Middle = 'Middle',
+  Bottom = 'Bottom',
 }
 
 export enum Horizontal {
-  Left,
-  Middle,
-  Right
+  Left = 'Left',
+  Middle = 'Middle',
+  Right = 'Right',
 }
 
+export const Verticals: { [key in Vertical]: number } = {
+  [Vertical.Top]: -Config.height / 2,
+  [Vertical.Middle]: 0,
+  [Vertical.Bottom]: Config.height / 2,
+};
+
+export const Horizontals: { [key in Horizontal]: number } = {
+  [Horizontal.Left]: 0,
+  [Horizontal.Middle]: Config.width / 2,
+  [Horizontal.Right]: Config.width,
+};
+
 export const position = (vertical: Vertical, horizontal: Horizontal) => {
-  let x = 0;
-
-  switch (horizontal) {
-    case Horizontal.Left:
-      x = 0;
-      break;
-    case Horizontal.Middle:
-      x = Config.width / 2;
-      break;
-    case Horizontal.Right:
-      x = Config.width;
-      break;
-  }
-
-  let y = 0;
-
-  switch (vertical) {
-    case Vertical.Top:
-      y = -Config.height / 2;
-      break;
-    case Vertical.Middle:
-      y = 0;
-      break;
-    case Vertical.Bottom:
-      y = Config.height / 2;
-      break;
-  }
-
-  return [x, y];
+  return [
+    Horizontals[horizontal], Verticals[vertical]
+  ];
 };
