@@ -5,7 +5,7 @@ const Config = {
   bulletSpeed: 500,
   totalHp: 100,
   totalEnergy: 1_000,
-  enemyTrigger: 20, // if score goes above, spawn enemy
+  enemyTrigger: 200, // if score goes above, spawn enemy
   enemyHealth: 100,
   shieldEnergyPerTick: 5,
   energyPerTick: 1,

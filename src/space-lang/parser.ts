@@ -110,6 +110,7 @@ const isDigit = (c: string) => {
 }
 
 export const parse = (text: string): ProgramAst => {
+  text = text.toUpperCase();
   const program: ProgramAst = [];
 
   let start = 0;
