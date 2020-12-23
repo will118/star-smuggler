@@ -5,7 +5,7 @@ import { Sounds } from '../resources';
 import { Asteroid } from './asteroid';
 import { HealthStats } from './healthbar';
 import { Shield } from './shield';
-import { Bullet } from './bullet';
+import { Bullet, PlayerBullet } from './bullet';
 import { stats } from '../stats';
 import { position, Horizontal, Vertical } from '../position';
 
@@ -124,7 +124,7 @@ export class PlayerShip extends Ship {
       const source = new ex.Vector(this.pos.x + 200, this.pos.y);
       const target = new ex.Vector(x, y);
       const dir = target.sub(source);
-      const bullet = new Bullet(source, dir, this);
+      const bullet = new PlayerBullet(source, dir, this);
       Sounds.laserSound.play();
       engine.add(bullet);
     }

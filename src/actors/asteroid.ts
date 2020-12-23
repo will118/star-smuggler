@@ -3,6 +3,7 @@ import { stats } from '../stats'
 import { Horizontals, Verticals } from '../position';
 import { Images } from '../resources';
 import { Shield } from './shield';
+import { PlayerBullet } from './bullet';
 import { PlayerShip } from './ship';
 
 const random = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -95,7 +96,8 @@ export class Asteroid extends ex.Actor {
       if (
         evt.other.body.collider.type !== ex.CollisionType.Passive ||
         evt.other instanceof PlayerShip ||
-        evt.other instanceof Shield
+        evt.other instanceof Shield ||
+        evt.other instanceof PlayerBullet
       ) {
         this.onImpact(engine);
       }
