@@ -64,11 +64,17 @@ export class Container extends ex.Scene {
     });
 
     const grid = new Grid();
+    let editorOpen = false;
     const ship = new PlayerShip(component => {
+      if (editorOpen) {
+        return;
+      }
+      editorOpen = true;
       this._editor.open(this._gameVm!, component, () => {
         engine.remove(grid);
         engine.start();
         ship.resetButton(component);
+        editorOpen = false;
       });
       engine.add(grid);
       engine.stop();
