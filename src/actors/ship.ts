@@ -65,7 +65,25 @@ export class PlayerShip extends Ship {
 
   onInitialize(engine: ex.Engine) {
     super.onInitialize(engine);
-    this.on('pointerup', () => { this._onComponentClick(CodeComponent.LaserGun) });
+    engine.add(
+      new Chip(
+        100,
+        0,
+        ex.Color.fromRGB(50, 160, 168),
+        CodeComponent.Shield,
+        this._onComponentClick
+      )
+    )
+
+    engine.add(
+      new Chip(
+        225,
+        0,
+        ex.Color.fromRGB(50, 160, 168),
+        CodeComponent.LaserGun,
+        this._onComponentClick
+      )
+    )
   }
 
   private tryTakeEnergy(amount: number) {
@@ -101,5 +119,34 @@ export class PlayerShip extends Ship {
     if (this._shieldActive && !this.tryTakeEnergy(Config.shieldEnergyPerTick)) {
       this.toggleShield(engine);
     }
+  }
+}
+
+class Chip extends ex.Actor {
+  private _onClick: () => void;
+  private _component: CodeComponent;
+
+  constructor(
+    x: number,
+    y: number,
+    color: ex.Color,
+    component: CodeComponent,
+    onClick: (c: CodeComponent) => void) {
+      super({ color, x, y, width: 100, height: 50 });
+      this._onClick = () => onClick(component);
+      this._component = component;
+
+  }
+
+  onInitialize(engine: ex.Engine) {
+    this.on('pointerup', this._onClick);
+    const label = new ex.Label(
+      this._component.toUpperCase(),
+      this.pos.x - 30,
+      this.pos.y + 15,
+      'CodeFont'
+    );
+    label.fontSize = 30;
+    engine.add(label);
   }
 }

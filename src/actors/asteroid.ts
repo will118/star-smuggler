@@ -2,6 +2,7 @@ import * as ex from 'excalibur';
 import { stats } from '../stats'
 import { Horizontals, Verticals } from '../position';
 import { Images } from '../resources';
+import { Shield } from './shield';
 import { PlayerShip } from './ship';
 
 const random = (min: number, max: number) => Math.random() * (max - min) + min;

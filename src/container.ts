@@ -25,6 +25,8 @@ export class Container extends ex.Scene {
   private _editorModal: HTMLDivElement;
   private _editor: HTMLDivElement;
   private _code: string | null = null;
+  private _activeComponent: CodeComponent | null = null;
+  private _jar: CodeJar | null = null;
 
   constructor(engine: ex.Engine) {
     super(engine);
@@ -92,8 +94,8 @@ export class Container extends ex.Scene {
     });
 
     const grid = new Grid();
-    const ship = new PlayerShip((_component: CodeComponent) => {
-      this.openEditor(() => {
+    const ship = new PlayerShip((component: CodeComponent) => {
+      this.openEditor(component, () => {
         engine.remove(grid);
         engine.start();
       });
@@ -116,19 +118,20 @@ export class Container extends ex.Scene {
   }
 
   onActivate() {
+    // TODO: add some cool highlighting
     const highlight = (_editor: HTMLElement) => {}
-    const jar = CodeJar(this._editor, highlight, { tab: '  ' });
-    this._code = code.getScript(CodeComponent.LaserGun);
-    jar.updateCode(this._code);
-
-    jar.onUpdate(code => {
+    this._jar = CodeJar(this._editor, highlight, { tab: '  ' });
+    this._jar.onUpdate(code => {
       this._code = code;
     });
   }
 
-  openEditor(onComplete: () => void) {
+  openEditor(component: CodeComponent, onComplete: () => void) {
+    this._activeComponent = component;
     this._onComplete = onComplete;
     ui!.appendChild(this._editorModal);
+    this._code = code.getScript(this._activeComponent);
+    this._jar!.updateCode(this._code);
   }
 
   onDeactivate() {
