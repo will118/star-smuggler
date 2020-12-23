@@ -1,6 +1,5 @@
 import * as ex from 'excalibur';
-import { CodeJar } from 'codejar';
-import { CodeComponent, code } from './code';
+import { Editor } from './editor';
 import { PlayerHealthBar } from './actors/healthbar';
 import { EnergyBar } from './actors/energybar';
 import { AsteroidField } from './actors/asteroid';
@@ -17,40 +16,13 @@ import { PlayerShip } from './actors/ship';
 import { Grid } from './actors/grid';
 import Config from './config';
 
-const ui = document.getElementById('ui');
-
 export class Container extends ex.Scene {
-  private _onComplete: (() => void) | null = null;
   private _gameVm: GameVm | null = null;
-  private _editorModal: HTMLDivElement;
-  private _editor: HTMLDivElement;
-  private _code: string | null = null;
+  private _editor: Editor;
 
   constructor(engine: ex.Engine) {
     super(engine);
-
-    this._editorModal = document.createElement('div');
-    this._editorModal.className = 'editor';
-
-    this._editor = document.createElement('div')
-    this._editor.className = 'actualEditor';
-    this._editorModal.appendChild(this._editor);
-
-    const buttons = document.createElement('div');
-    buttons.className = 'buttons';
-    this._editorModal.appendChild(buttons);
-
-    const button = document.createElement('button');
-    button.innerText = 'SAVE';
-
-    button.addEventListener('click', () => {
-      code.updateScript(CodeComponent.LaserGun, (this._code! || '').toUpperCase());
-      this._gameVm!.exec(code.getParsed(CodeComponent.LaserGun));
-      ui!.removeChild(this._editorModal);
-      this._onComplete!();
-    });
-
-    buttons.appendChild(button);
+    this._editor = new Editor();
   }
 
   onInitialize(engine: ex.Engine) {
@@ -92,14 +64,16 @@ export class Container extends ex.Scene {
     });
 
     const grid = new Grid();
-    const ship = new PlayerShip((_component: CodeComponent) => {
-      this.openEditor(() => {
+    const ship = new PlayerShip(component => {
+      this._editor.open(this._gameVm!, component, () => {
         engine.remove(grid);
         engine.start();
+        ship.resetButton(component);
       });
       engine.add(grid);
       engine.stop();
     });
+
     engine.add(ship);
 
     this._gameVm = new GameVm(
@@ -113,25 +87,5 @@ export class Container extends ex.Scene {
   private generateDocs() {
     const docs = document.getElementById('docs');
     docs!.innerHTML = generateDocs();
-  }
-
-  onActivate() {
-    const highlight = (_editor: HTMLElement) => {}
-    const jar = CodeJar(this._editor, highlight, { tab: '  ' });
-    this._code = code.getScript(CodeComponent.LaserGun);
-    jar.updateCode(this._code);
-
-    jar.onUpdate(code => {
-      this._code = code;
-    });
-  }
-
-  openEditor(onComplete: () => void) {
-    this._onComplete = onComplete;
-    ui!.appendChild(this._editorModal);
-  }
-
-  onDeactivate() {
-    ui!.innerHTML = ''
   }
 }

@@ -88,7 +88,7 @@ export const enemy1 = (engine: ex.Engine, onDefeat: () => void) => new Enemy(onD
     shots: 4,
     thresholdPercentage: 60,
     phaseComplete: function() {
-      this.timer.cancel();
+      this.timer && this.timer.cancel();
     },
     action: function(e) {
       if (this.timer) return;

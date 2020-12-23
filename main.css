@@ -35,10 +35,15 @@
   color: white;
   width: 600px;
   height: 600px;
-  padding: 10px;
+  padding: 20px;
   display: flex;
   flex-direction: row;
   text-transform: uppercase;
+  border-radius: 6px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 50px;
 }
 
 #ui .editor .actualEditor {
@@ -46,12 +51,38 @@
   height: 100%;
 }
 
+#ui .editor .actualEditor .editor-instruction {
+  color: #aacc21;
+}
+
+#ui .editor .actualEditor .editor-event-type {
+  color: #ff9900;
+}
+
 #ui .editor .buttons {
   width: 20%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#ui .editor .buttons p {
+  color: #b1b1b1;
+  font-size: 42px;
+  align-self: flex-end;
+  display: flex;
+  margin-top: auto;
 }
 
 #ui .editor .buttons button {
   font-family: 'CodeFont', Fallback, sans-serif;
-  font-size: 50px;
+  font-size: 35px;
+  align-self: flex-start;
+  margin-bottom: 5%;
+  line-height: 50px;
+  width: 95%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
