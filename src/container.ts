@@ -73,7 +73,7 @@ export class Container extends ex.Scene {
       this._editor.open(this._gameVm!, component, () => {
         engine.remove(grid);
         engine.start();
-        ship.resetButton(component);
+        component.resetButton();
         editorOpen = false;
       });
       engine.add(grid);

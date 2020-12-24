@@ -11,13 +11,13 @@ export enum Instruction {
   SET = 'SET',
 }
 
-enum ReadWrite {
+export enum ReadWrite {
   Read = 'Read',
   Write = 'Write',
   ReadWrite = 'Read/Write'
 }
 
-type OperandDocs = {
+export type OperandDocs = {
   help: string;
   args: Array<string>;
   io: ReadWrite
@@ -27,7 +27,7 @@ export const EventTypeLookup: { [key: string]: { type: EventType } & OperandDocs
   SCANNER: {
     type: EventType.Scanner,
     args: ['X', 'Y', 'T'],
-    help: 'Bogey detected. T: 0 = Asteroid, 1 = Laser',
+    help: 'Bogey detected (0 = Asteroid, 1 = Laser)',
     io: ReadWrite.Read
   },
   LASER: {

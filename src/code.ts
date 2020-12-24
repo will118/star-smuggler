@@ -1,8 +1,8 @@
 import { ProgramAst, parse } from './space-lang/parser';
 
 export enum CodeComponent {
-  LaserGun = "Laser",
-  Shield = "Shield"
+  Chip1 = "Chip 1",
+  Chip2 = "Chip 2"
 }
 
 class Code {

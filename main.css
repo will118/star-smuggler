@@ -23,6 +23,7 @@
   position: relative;
   flex-grow: 1;
   background-color: gray;
+  padding-top: 0px;
 }
 
 #ui .editor {

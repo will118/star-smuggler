@@ -1,6 +1,7 @@
 import * as ex from 'excalibur';
 import Config from '../config';
 import { CodeComponent } from '../code';
+import { Chip, ChipRegister, RegisterName } from './chip';
 import { Sounds } from '../resources';
 import { Asteroid } from './asteroid';
 import { HealthStats } from './healthbar';
@@ -39,10 +40,9 @@ export const shipCollisionGroup = ex.CollisionGroupManager.create('ship');
 
 export class PlayerShip extends Ship {
   protected _stats: HealthStats = stats;
-  private _chipComponents: { [key in CodeComponent]: Chip | null };
-  private _onComponentClick: (component: CodeComponent) => void;
+  private _onComponentClick: (chipComponent: Chip) => void;
 
-  constructor(onComponentClick: (component: CodeComponent) => void) {
+  constructor(onComponentClick: (chipComponent: Chip) => void) {
     super({
       color: ex.Color.Chartreuse,
       body: new ex.Body({
@@ -59,10 +59,6 @@ export class PlayerShip extends Ship {
       }),
     });
 
-    this._chipComponents = {
-      [CodeComponent.LaserGun]: null,
-      [CodeComponent.Shield]: null,
-    };
     this._onComponentClick = onComponentClick;
 
     const [x,y] = position(Vertical.Middle, Horizontal.Left);
@@ -70,35 +66,29 @@ export class PlayerShip extends Ship {
     this.pos.y = y;
   }
 
-  resetButton(component: CodeComponent) {
-    this._chipComponents[component]!.resetButton();
-  }
-
   onInitialize(engine: ex.Engine) {
     super.onInitialize(engine);
-    const shieldComponent = new Chip(
+    const chip1Component = new Chip(
       100,
       0,
       ex.Color.fromRGB(50, 160, 168),
-      CodeComponent.Shield,
+      CodeComponent.Chip1,
+      [new ChipRegister(RegisterName.R1)],
       this._onComponentClick
     );
 
-    engine.add(shieldComponent);
+    engine.add(chip1Component);
 
-    this._chipComponents[CodeComponent.Shield] = shieldComponent;
-
-    const laserComponent = new Chip(
+    const chip2Component = new Chip(
       225,
       0,
       ex.Color.fromRGB(50, 160, 168),
-      CodeComponent.LaserGun,
+      CodeComponent.Chip2,
+      [new ChipRegister(RegisterName.R1), new ChipRegister(RegisterName.R2)],
       this._onComponentClick
     );
 
-    this._chipComponents[CodeComponent.LaserGun] = laserComponent;
-
-    engine.add(laserComponent)
+    engine.add(chip2Component)
   }
 
   private tryTakeEnergy(amount: number) {
@@ -134,43 +124,5 @@ export class PlayerShip extends Ship {
     if (this._shieldActive && !this.tryTakeEnergy(Config.shieldEnergyPerTick)) {
       this.toggleShield(engine);
     }
-  }
-}
-
-class Chip extends ex.Actor {
-  private _onClick: () => void;
-  private _component: CodeComponent;
-  private _originalColor: ex.Color;
-
-  constructor(
-    x: number,
-    y: number,
-    color: ex.Color,
-    component: CodeComponent,
-    onClick: (c: CodeComponent) => void) {
-      super({ color, x, y, width: 100, height: 50 });
-      this._onClick = () => onClick(component);
-      this._component = component;
-      this._originalColor = color;
-  }
-
-  resetButton() {
-    this.color = this._originalColor;
-  }
-
-  onInitialize(engine: ex.Engine) {
-    this.on('pointerup', () => {
-      this.color = ex.Color.Red;
-      this._onClick();
-    });
-
-    const label = new ex.Label(
-      this._component.toUpperCase(),
-      this.pos.x - 30,
-      this.pos.y + 15,
-      'CodeFont'
-    );
-    label.fontSize = 30;
-    engine.add(label);
   }
 }

@@ -1,23 +1,30 @@
-import { InstructionDocs, EventTypeLookup } from './space-lang/parser';
+import { InstructionDocs, OperandDocs, ReadWrite, EventTypeLookup } from './space-lang/parser';
 
 const generateInstructionDocs = () => {
   return Object.entries(InstructionDocs).sort().map(([instruction, docs]) => {
     return `<p>
-      <b>${instruction}</b> (e.g. <i>${docs.example}</i>)
-      <br/>
-      ${docs.help}
+      <b>${instruction}</b> (e.g. <i>${docs.example}</i>) ${docs.help}
     </p>`;
   }).join('\n');
 }
 
 const generateEventTypes = () => {
-  return Object.entries(EventTypeLookup).sort().map(([key, docs]) => {
-    return `<b>${key}</b> ${docs.help} (${docs.io}) [${docs.args}]`;
-  }).join('<br/>');
+  const types = Object.entries(EventTypeLookup).sort();
+
+  const systemTypes = types.filter(([_key, docs]) => docs.io === ReadWrite.Read);
+  const userTypes = types.filter(([_key, docs]) => docs.io !== ReadWrite.Read);
+
+  const f = (key: string, docs: OperandDocs) => `<b>${key}</b> [${docs.args}] ${docs.help}`;
+  return `<h3>System (raised by system, actioned by user)</h3>
+    ${systemTypes.map(([key, docs]) => f(key, docs)).join('<br/>')}
+    <h3>User (raised by user, actioned by system)</h3>
+    ${userTypes.map(([key, docs]) => f(key, docs)).join('<br/>')}
+  `;
 }
 
 export const generateDocs = () => `
+    <h2>Instructions</h2>
     ${generateInstructionDocs()}
-    <p>Event Types:</p>
+    <h2>Event Types</h2>
     ${generateEventTypes()}
 `;
