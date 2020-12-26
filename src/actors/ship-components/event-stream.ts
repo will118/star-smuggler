@@ -1,8 +1,8 @@
 export enum EventType {
-  Scanner,
-  Laser,
-  ShieldHit,
-  ShieldToggle,
+  Scanner = 'SCANNER',
+  Laser = 'LASER',
+  ShieldHit = 'SHIELD_HIT',
+  ShieldToggle = 'SHIELD_TOGGLE',
 }
 
 export type ShipEvent = [EventType, Array<number>];

@@ -1,4 +1,5 @@
-import { ProgramAst, parse } from './space-lang/parser';
+import { parse } from './space-lang/parser';
+import { ProgramAst } from './space-lang/types';
 
 export enum CodeComponent {
   Chip1 = "Chip 1",

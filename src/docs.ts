@@ -1,15 +1,20 @@
-import { InstructionDocs, OperandDocs, ReadWrite, EventTypeLookup } from './space-lang/parser';
+import { InstructionDocs, OperandDocs, ReadWrite, EventTypeLookup } from './space-lang/types';
 
 const generateInstructionDocs = () => {
-  return Object.entries(InstructionDocs).sort().map(([instruction, docs]) => {
+  const formatExamples = (examples: Array<string>) => {
+    return examples.map(e => `<i>${e}</i>`).join(', ');
+  };
+  return Object.entries(InstructionDocs).map(([instruction, docs]) => {
     return `<p>
-      <b>${instruction}</b> (e.g. <i>${docs.example}</i>) ${docs.help}
+      <b>${instruction}</b> (e.g. ${formatExamples(docs.examples)})
+      <br />
+      ${docs.help}
     </p>`;
   }).join('\n');
 }
 
 const generateEventTypes = () => {
-  const types = Object.entries(EventTypeLookup).sort();
+  const types = Object.entries(EventTypeLookup);
 
   const systemTypes = types.filter(([_key, docs]) => docs.io === ReadWrite.Read);
   const userTypes = types.filter(([_key, docs]) => docs.io !== ReadWrite.Read);

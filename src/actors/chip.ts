@@ -1,16 +1,14 @@
 import * as ex from 'excalibur';
 import { CodeComponent } from '../code';
-
-export enum RegisterName {
-  R1 = 'R1',
-  R2 = 'R2',
-}
+import { Register } from '../space-lang/types';
 
 export class ChipRegister {
-  public name: RegisterName;
+  public name: Register;
+  public value: number;
 
-  constructor(name: RegisterName) {
+  constructor(name: Register) {
     this.name = name;
+    this.value = 0;
   }
 }
 
@@ -32,10 +30,6 @@ export class Chip extends ex.Actor {
       this.component = component;
       this._originalColor = color;
       this.registers = registers;
-  }
-
-  tryGetRegister(name: RegisterName) {
-    return this.registers.find(register => register.name === name);
   }
 
   resetButton() {

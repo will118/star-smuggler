@@ -2,7 +2,7 @@ import { CodeJar } from 'codejar';
 import { GameVm } from './game-vm';
 import { code } from './code';
 import { Chip, ChipRegister } from './actors/chip';
-import { Instruction, EventTypeLookup } from './space-lang/parser';
+import { Register, Instruction, EventTypeLookup } from './space-lang/types';
 
 const ui = document.getElementById('ui');
 
@@ -38,6 +38,7 @@ export class Editor {
     buttons.appendChild(cancelButton);
 
     this._registersElement = document.createElement('div');
+    this._registersElement.classList.add('registers');
     buttons.appendChild(this._registersElement);
 
     this._componentLabel = document.createElement('p');
@@ -55,7 +56,7 @@ export class Editor {
     const code = (editor.textContent || '');
 
     editor.innerHTML = code.split('\n').map(line => {
-      line = line.trim().toUpperCase();
+      line = line.toUpperCase();
       let outputLine = '';
 
       const instructionMatch = line.match(/^([^\s]+)/);
@@ -84,23 +85,28 @@ export class Editor {
     for (const register of registers) {
       const regElem = document.createElement('div');
       regElem.classList.add('register');
-      regElem.innerText = register.name;
+      regElem.innerHTML = register.name;
+      if (register.name === Register.EVT) {
+        regElem.innerHTML += `[]<br /><span class='register-value'>PAYLOAD</span>`;
+      } else {
+        regElem.innerHTML += `<br /><span class='register-value'>${register.value}</span>`;
+      }
       this._registersElement.appendChild(regElem);
     }
   }
 
-  open(vm: GameVm, chipComponent: Chip, onComplete: () => void) {
+  open(vm: GameVm, chip: Chip, onComplete: () => void) {
     this._onSave = (shouldExec: boolean) => () => {
-      code.updateScript(chipComponent.component, this._code! || '');
+      code.updateScript(chip.component, this._code! || '');
       if (shouldExec) {
-        vm.exec(code.getParsed(chipComponent.component));
+        vm.exec(chip, code.getParsed(chip.component));
       }
       ui!.removeChild(this._editorModal);
       onComplete();
     }
-    this._componentLabel.innerText = chipComponent.component;
-    this.setRegisters(chipComponent.registers);
-    this._code = code.getScript(chipComponent.component);
+    this._componentLabel.innerText = chip.component;
+    this.setRegisters(chip.registers);
+    this._code = code.getScript(chip.component);
     this._jar!.updateCode(this._code);
     ui!.appendChild(this._editorModal);
   }

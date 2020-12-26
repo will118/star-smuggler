@@ -1,7 +1,8 @@
 import * as ex from 'excalibur';
 import Config from '../config';
 import { CodeComponent } from '../code';
-import { Chip, ChipRegister, RegisterName } from './chip';
+import { Chip, ChipRegister } from './chip';
+import { Register } from '../space-lang/types';
 import { Sounds } from '../resources';
 import { Asteroid } from './asteroid';
 import { HealthStats } from './healthbar';
@@ -73,7 +74,10 @@ export class PlayerShip extends Ship {
       0,
       ex.Color.fromRGB(50, 160, 168),
       CodeComponent.Chip1,
-      [new ChipRegister(RegisterName.R1)],
+      [
+        new ChipRegister(Register.EVT), // Just so it appears in UI
+        new ChipRegister(Register.R1)
+      ],
       this._onComponentClick
     );
 
@@ -84,7 +88,11 @@ export class PlayerShip extends Ship {
       0,
       ex.Color.fromRGB(50, 160, 168),
       CodeComponent.Chip2,
-      [new ChipRegister(RegisterName.R1), new ChipRegister(RegisterName.R2)],
+      [
+        new ChipRegister(Register.EVT), // Just so it appears in UI
+        new ChipRegister(Register.R1),
+        new ChipRegister(Register.R2)
+      ],
       this._onComponentClick
     );
 

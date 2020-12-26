@@ -1,105 +1,4 @@
-import { EventType } from '../actors/ship-components/event-stream';
-
-export enum Instruction {
-  XEQ = 'XEQ',
-  MOVX = 'MOVX',
-  SLP = 'SLP',
-  ADD = 'ADD',
-  SUB = 'SUB',
-  RLT = 'RLT',
-  RGT = 'RGT',
-  SET = 'SET',
-}
-
-export enum ReadWrite {
-  Read = 'Read',
-  Write = 'Write',
-  ReadWrite = 'Read/Write'
-}
-
-export type OperandDocs = {
-  help: string;
-  args: Array<string>;
-  io: ReadWrite
-}
-
-export const EventTypeLookup: { [key: string]: { type: EventType } & OperandDocs } = {
-  SCANNER: {
-    type: EventType.Scanner,
-    args: ['X', 'Y', 'T'],
-    help: 'Bogey detected (0 = Asteroid, 1 = Laser)',
-    io: ReadWrite.Read
-  },
-  LASER: {
-    type: EventType.Laser,
-    args: ['X', 'Y'],
-    help: 'Fires laser',
-    io: ReadWrite.Write
-  },
-  SHIELD_TOGGLE: {
-    type: EventType.ShieldToggle,
-    args: [],
-    help: 'Toggles shield on/off',
-    io: ReadWrite.Write
-  },
-  SHIELD_HIT: {
-    type: EventType.ShieldHit,
-    args: [],
-    help: 'Shield hit',
-    io: ReadWrite.Read
-  }
-};
-
-
-type Documentation = {
-  help: string,
-  example: string
-}
-
-export const InstructionDocs: { [key in Instruction]: Documentation } = {
-  XEQ: {
-    help: 'tests the event type, continues if matching',
-    example: 'XEQ SHIELD_HIT'
-  },
-  MOVX: {
-    help: 'posts an event to the bus with the DATA register as payload',
-    example: 'MOVX LASER'
-  },
-  SLP: {
-    help: 'sleeps for N ms',
-    example: 'SLP 500'
-  },
-  ADD: {
-    help: 'adds a value to a specified index of the DATA register',
-    example: 'ADD 0 500',
-  },
-  SUB: {
-    help: 'subtracts a value from a specified index of the DATA register',
-    example: 'SUB 0 500',
-  },
-  SET: {
-    help: 'sets the value of a specified index of the DATA register',
-    example: 'SET 1 225',
-  },
-  RLT: {
-    help: 'returns if value at index is less than supplied value',
-    example: 'RLT 1 540',
-  },
-  RGT: {
-    help: 'returns if value at index is greater than supplied value',
-    example: 'RGT 1 100',
-  }
-};
-
-enum Register {
-  R1,
-  R2,
-  DATA,
-}
-
-type Operands = Array<EventType | number | Register>;
-
-export type ProgramAst = Array<[Instruction, Operands]>;
+import { ProgramAst, Operands, Instruction, Register, EventTypeLookup } from './types';
 
 const isAlpha = (c: string) => {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
@@ -117,6 +16,7 @@ export const parse = (text: string): ProgramAst => {
   let current = 0;
 
   const peek = () => text[current];
+  const peekN = (n: number) => text.slice(current, current + n);
   const advance = () => text[current++];
   const isEOF = () => current >= text.length;
 
@@ -131,21 +31,10 @@ export const parse = (text: string): ProgramAst => {
 
     start = current;
 
-    let inst: Instruction | null = null;
+    const inst = Instruction[name as keyof typeof Instruction] || null;
 
-    switch (name) {
-      case Instruction.XEQ:
-      case Instruction.MOVX:
-      case Instruction.SLP:
-      case Instruction.SUB:
-      case Instruction.ADD:
-      case Instruction.RLT:
-      case Instruction.RGT:
-      case Instruction.SET:
-        inst = name;
-        break;
-      default:
-        throw new Error('Unsupported instruction: ' + name);
+    if (inst === null) {
+      throw new Error('Unsupported instruction: ' + name);
     }
 
     const operands = () => {
@@ -156,12 +45,40 @@ export const parse = (text: string): ProgramAst => {
         switch (c) {
           case '\n':
             return ops;
+          case ' ':
+            break;
           default:
-            if (isDigit(c) || c === '-') {
+            if (c + peekN(3) === 'EVT[') {
+              current += 3;
+              start = current;
               while (isDigit(peek())) {
                 advance();
               }
-              ops.push(parseInt(text.slice(start, current), 10));
+              if (advance() !== ']') {
+                throw new Error('Failed to parse EVT index: '+ peek());
+              }
+              ops.push({
+                evt: true,
+                index: parseInt(text.slice(start, current), 10)
+              });
+            } else if (c === 'R') {
+              while (isDigit(peek())) {
+                advance();
+              }
+              const regName = text.slice(start, current);
+              const reg = Register[regName as keyof typeof Register] || null;
+              if (reg === null) {
+                throw new Error('Invalid register');
+              }
+              ops.push(reg);
+            } else if (isDigit(c) || c === '-') {
+              while (isDigit(peek())) {
+                advance();
+              }
+              ops.push({
+                integer: true,
+                value: parseInt(text.slice(start, current), 10)
+              });
             } else if (isAlpha(peek())) {
               while (isAlpha(peek())) {
                 advance();
@@ -180,9 +97,8 @@ export const parse = (text: string): ProgramAst => {
       return ops;
     };
 
-    program.push([inst!, operands()]);
+    program.push([inst, operands()]);
   };
-
 
   while (!isEOF()) {
     const c = advance();
