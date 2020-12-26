@@ -1,13 +1,17 @@
 import { PlainComponent } from './plain-component';
-import { EventStream, EventType } from './event-stream';
+import { isNumber } from '../../space-lang/types';
+import { EventStream, SystemEventType } from './event-stream';
 
 export class Shield extends PlainComponent {
-  constructor(eventStream: EventStream, toggleShield: () => void) {
+  constructor(eventStream: EventStream, toggleShield: (on: boolean) => void) {
     super();
 
-    eventStream.addListener(async ([type, _data]) => {
-      if (type === EventType.ShieldToggle) {
-        toggleShield();
+    eventStream.addListener(async ([type, onOrOff]) => {
+      if (type === SystemEventType.Shield) {
+        if (!isNumber(onOrOff) || onOrOff > 1 || onOrOff < 0) {
+          throw new Error('Invalid arguments to shield component');
+        }
+        toggleShield(onOrOff === 1);
       }
     });
   }

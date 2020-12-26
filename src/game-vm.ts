@@ -12,39 +12,38 @@ import {
   isIntegerValue,
   isRegister,
   isEventType,
+  isEventTypeValue,
   Operand
 } from './space-lang/types';
 
 class Environment {
-  private _data: Array<number> = [];
-  private _eventType: EventType;
+  private _data: Array<number | EventType> = [];
 
-  constructor(eventType: EventType, data: Array<number>) {
-    this._eventType = eventType;
-    this._data = data;
+  constructor(payload: Array<number | EventType>) {
+    this._data = payload;
   }
 
   getPayload() {
-    return this._data;
+    return this._data
   }
 
-  setData(idx: number, v: number) {
-    if (idx === 0) {
-      throw new Error('Setting EVT[0] is prohibited');
-    } else {
-      const adjustedIdx = idx - 1;
-      this.boundsCheck(adjustedIdx)
-      this._data[adjustedIdx] = v;
-    }
+  setData(idx: number, v: number | EventType) {
+    this.boundsCheck(idx)
+    this._data[idx] = v;
   }
 
   getData(idx: number): number | EventType {
-    if (idx === 0) {
-      return this._eventType;
+    this.boundsCheck(idx)
+    return this._data[idx];
+  }
+
+  resizeData(size: number) {
+    if (size <= this._data.length) {
+      this._data.length = size;
     } else {
-      const adjustedIdx = idx - 1;
-      this.boundsCheck(adjustedIdx)
-      return this._data[adjustedIdx];
+      this._data = this._data.concat(
+        (new Array(size - this._data.length)).fill(0)
+      );
     }
   }
 
@@ -62,41 +61,38 @@ const sleep = (ms: number) => new Promise<void>(resolve => {
 export class GameVm {
   private _components: Array<PlainComponent | Component> = [];
   private _eventStream: EventStream;
-  private _removeListener: (() => void) | null = null;
+  private _removeListenerMap: Map<Chip, () => {}> = new Map();
 
   constructor(
     eventStream: EventStream,
     fireLaser: (x: number, y: number) => void,
-    toggleShield: () => void) {
+    toggleShield: (on: boolean) => void) {
     this._eventStream = eventStream;
     this.addComponents(eventStream, fireLaser, toggleShield);
   }
 
-  private updateListener(f: Listener) {
-    if (this._removeListener) this._removeListener();
-    this._removeListener = this._eventStream.addListener(f);
+  private updateListener(chip: Chip, f: Listener) {
+    this._removeListenerMap.get(chip)?.();
+    this._removeListenerMap.set(chip, this._eventStream.addListener(f));
   }
 
   private addComponents(
     eventStream: EventStream,
     fireLaser: (x: number, y: number) => void,
-    toggleShield: () => void) {
+    toggleShield: (on: boolean) => void) {
     this._components.push(new Laser(eventStream, fireLaser));
     this._components.push(new Shield(eventStream, toggleShield));
   }
 
   public exec(chip: Chip, program: ProgramAst) {
-    this.updateListener(async ([eventType, data]) => {
-      const env = new Environment(eventType, data);
+    this.updateListener(chip, async (payload) => {
+      const env = new Environment(payload);
 
-      const registerOrVal = (operand: Operand, updateFn: ((n: number) => number) | null) => {
+      const registerOrVal = (operand: Operand, updateFn: ((n: number | EventType) => number | EventType) | null) => {
         if (isEvtIndex(operand)) {
           const idx = operand.index;
           const value = env.getData(idx);
           if (updateFn !== null) {
-            if (isEventType(value)) {
-              throw new Error('Updating the event type is not permitted, use OUTD');
-            }
             const newVal = updateFn(value);
             env.setData(idx, newVal);
           }
@@ -114,14 +110,18 @@ export class GameVm {
             throw new Error('Unable to locate register');
           }
           if (updateFn !== null) {
-            r.value = updateFn(r.value);
+            const newVal = updateFn(r.value)
+            if (isEventType(newVal)) {
+              throw new Error('Register only supports numeric values');
+            }
+            r.value = newVal;
           }
           return r.value;
-        } else if (isEventType(operand)) {
+        } else if (isEventTypeValue(operand)) {
           if (updateFn !== null) throw new Error('Cannot update a value');
-          return operand;
+          return operand.value;
         } else {
-          throw new Error('Unknown operand');
+          throw new Error('Unknown operand: ' + JSON.stringify(operand));
         }
       }
 
@@ -138,40 +138,51 @@ export class GameVm {
             await sleep(ms.value);
             break;
           }
-          case Instruction.OUTD: {
-            const [evtType] = operands;
-            if (!isEventType(evtType)) {
-              // Maybe we should allow any string?
-              throw new Error('Operand must be valid event type');
+          case Instruction.POST: {
+            const [count] = operands;
+            let n = 1;
+            if (count) {
+              if (!isIntegerValue(count)) {
+                throw new Error('POST only supports immediate integer value');
+              }
+              if (count.value < 0) {
+                throw new Error('POST optional count operand must be greater than 0');
+              }
+              n = count.value;
             }
-            this._eventStream.post([evtType, env.getPayload()]);
+
+            while (n-- > 0) {
+              this._eventStream.post(env.getPayload());
+            }
+
             break;
           }
           case Instruction.MOV: {
             const [dst, src] = operands;
             const newVal = registerOrVal(src, null);
-            if (isEventType(newVal)) {
-              throw new Error('Cannot mov event type');
-            }
             registerOrVal(dst, _ => newVal);
             break;
           }
           case Instruction.ADD: {
             const [dst, src] = operands;
             const newVal = registerOrVal(src, null);
-            if (isEventType(newVal)) {
-              throw new Error('Cannot add event type');
-            }
-            registerOrVal(dst, v => v + newVal);
+            registerOrVal(dst, v => {
+              if (isEventType(v) || isEventType(newVal)) {
+                throw new Error('Cannot add event type');
+              }
+              return v + newVal;
+            });
             break;
           }
           case Instruction.SUB: {
             const [dst, src] = operands;
             const newVal = registerOrVal(src, null);
-            if (isEventType(newVal)) {
-              throw new Error('Cannot subtract event type');
-            }
-            registerOrVal(dst, v => v - newVal);
+            registerOrVal(dst, v => {
+              if (isEventType(v) || isEventType(newVal)) {
+                throw new Error('Cannot subtract event type');
+              }
+              return v - newVal;
+            });
             break;
           }
           case Instruction.RNE: {
@@ -195,6 +206,18 @@ export class GameVm {
             }
             break;
           }
+          case Instruction.LEN: {
+            const [len] = operands;
+            const l = registerOrVal(len, null);
+            if (isEventType(l)) {
+              throw new Error('Cannot set length with event type');
+            }
+            env.resizeData(l);
+            break;
+          }
+          default:
+            const exhaustiveCheck: never = instruction;
+            throw new Error(`Unhandled instruction: ${exhaustiveCheck}`);
         }
       }
     });

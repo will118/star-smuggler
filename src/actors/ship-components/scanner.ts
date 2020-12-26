@@ -3,7 +3,7 @@ import Config from '../../config';
 import { Component } from './component';
 import { Asteroid } from '../asteroid';
 import { EnemyBullet } from '../bullet';
-import { EventType, eventStream } from './event-stream';
+import { SystemEventType, eventStream } from './event-stream';
 import { position, Horizontal, Vertical } from '../../position';
 
 export class Scanner extends Component {
@@ -55,8 +55,10 @@ export class Scanner extends Component {
         if (!this._bogeys.has(evt.other)) {
           this._bogeys.set(evt.other, 0);
           eventStream.post([
-            EventType.Scanner,
-            [evt.other.pos.x, evt.other.pos.y, this.scannerBogeyType(evt.other)]
+            SystemEventType.Scanner,
+            evt.other.pos.x,
+            evt.other.pos.y,
+            this.scannerBogeyType(evt.other)
           ]);
         }
       }

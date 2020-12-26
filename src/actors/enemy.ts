@@ -85,7 +85,6 @@ export class Enemy extends Ship {
 
 export const enemy1 = (engine: ex.Engine, onDefeat: () => void) => new Enemy(onDefeat, [
   {
-    shots: 4,
     thresholdPercentage: 60,
     phaseComplete: function() {
       this.timer && this.timer.cancel();
@@ -103,7 +102,6 @@ export const enemy1 = (engine: ex.Engine, onDefeat: () => void) => new Enemy(onD
     }
   },
   {
-    shots: 4,
     thresholdPercentage: 0,
     phaseComplete: function() {
       this.timer.cancel();

@@ -2,7 +2,8 @@ import { CodeJar } from 'codejar';
 import { GameVm } from './game-vm';
 import { code } from './code';
 import { Chip, ChipRegister } from './actors/chip';
-import { Register, Instruction, EventTypeLookup } from './space-lang/types';
+import { Register, Instruction } from './space-lang/types';
+import { SystemEventType } from './actors/ship-components/event-stream';
 
 const ui = document.getElementById('ui');
 
@@ -71,7 +72,7 @@ export class Editor {
       const eventTypeMatch = line.match(/^(\w+)$/);
       const eventType = eventTypeMatch && eventTypeMatch[1];
 
-      if (eventType && eventType in EventTypeLookup) {
+      if (eventType && eventType in SystemEventType) {
         outputLine += `<span class='editor-event-type'>${eventType}</span>`;
         line = '';
       }

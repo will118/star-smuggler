@@ -42,6 +42,7 @@ export const shipCollisionGroup = ex.CollisionGroupManager.create('ship');
 export class PlayerShip extends Ship {
   protected _stats: HealthStats = stats;
   private _onComponentClick: (chipComponent: Chip) => void;
+  private _chips: Array<Chip> = [];
 
   constructor(onComponentClick: (chipComponent: Chip) => void) {
     super({
@@ -67,36 +68,29 @@ export class PlayerShip extends Ship {
     this.pos.y = y;
   }
 
+  private addChip(engine: ex.Engine, name: CodeComponent, registers: Array<Register>) {
+    const chip = new Chip(
+      85 + (this._chips.length * 115),
+      0,
+      ex.Color.fromRGB(50, 160, 168),
+      name,
+      [
+        new ChipRegister(Register.EVT), // Just so it appears in UI
+        ...registers.map(r => new ChipRegister(r))
+      ],
+      this._onComponentClick
+    );
+
+    this._chips.push(chip);
+    engine.add(chip);
+  }
+
   onInitialize(engine: ex.Engine) {
     super.onInitialize(engine);
-    const chip1Component = new Chip(
-      100,
-      0,
-      ex.Color.fromRGB(50, 160, 168),
-      CodeComponent.Chip1,
-      [
-        new ChipRegister(Register.EVT), // Just so it appears in UI
-        new ChipRegister(Register.R1)
-      ],
-      this._onComponentClick
-    );
 
-    engine.add(chip1Component);
-
-    const chip2Component = new Chip(
-      225,
-      0,
-      ex.Color.fromRGB(50, 160, 168),
-      CodeComponent.Chip2,
-      [
-        new ChipRegister(Register.EVT), // Just so it appears in UI
-        new ChipRegister(Register.R1),
-        new ChipRegister(Register.R2)
-      ],
-      this._onComponentClick
-    );
-
-    engine.add(chip2Component)
+    this.addChip(engine, CodeComponent.Chip1, [Register.R1]);
+    this.addChip(engine, CodeComponent.Chip2, [Register.R1]);
+    this.addChip(engine, CodeComponent.Chip3, [Register.R1, Register.R2]);
   }
 
   private tryTakeEnergy(amount: number) {
@@ -107,11 +101,11 @@ export class PlayerShip extends Ship {
     return false;
   }
 
-  toggleShield(engine: ex.Engine) {
-    if (this._shieldActive) {
+  toggleShield(engine: ex.Engine, onOff: boolean) {
+    if (this._shieldActive && !onOff) {
       engine.remove(this._shield);
       this._shieldActive = false;
-    } else if (this.tryTakeEnergy(Config.shieldEnergyPerTick)) {
+    } else if (onOff && this.tryTakeEnergy(Config.shieldEnergyPerTick)) {
       engine.add(this._shield);
       this._shieldActive = true;
     }
@@ -130,7 +124,7 @@ export class PlayerShip extends Ship {
 
   onPreUpdate(engine: ex.Engine, _delta: number) {
     if (this._shieldActive && !this.tryTakeEnergy(Config.shieldEnergyPerTick)) {
-      this.toggleShield(engine);
+      this.toggleShield(engine, false);
     }
   }
 }

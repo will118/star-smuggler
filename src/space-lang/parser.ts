@@ -1,4 +1,4 @@
-import { ProgramAst, Operands, Instruction, Register, EventTypeLookup } from './types';
+import { ProgramAst, Operands, Instruction, Register } from './types';
 
 const isAlpha = (c: string) => {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
@@ -83,13 +83,10 @@ export const parse = (text: string): ProgramAst => {
               while (isAlpha(peek())) {
                 advance();
               }
-              const eventName = text.slice(start, current);
-              const eventType = EventTypeLookup[eventName];
-              if (eventType !== undefined) {
-                ops.push(eventType.type);
-              } else {
-                throw new Error('Unsupported event type: ' + eventName);
-              }
+              ops.push({
+                evtType: true,
+                value: text.slice(start, current)
+              });
             }
         }
         start = current;

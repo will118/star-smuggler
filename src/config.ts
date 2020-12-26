@@ -5,7 +5,7 @@ const Config = {
   bulletSpeed: 500,
   totalHp: 100,
   totalEnergy: 1_000,
-  enemyTrigger: 200, // if score goes above, spawn enemy
+  enemyTrigger: 5, // if score goes above, spawn enemy
   enemyHealth: 100,
   shieldEnergyPerTick: 5,
   energyPerTick: 1,
@@ -17,7 +17,7 @@ const Config = {
   height: 900,
   components: {
     scanner: {
-      redetectionTickCount: 100,
+      redetectionTickCount: 100_000,
     },
   },
 }

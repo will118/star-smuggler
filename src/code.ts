@@ -3,7 +3,8 @@ import { ProgramAst } from './space-lang/types';
 
 export enum CodeComponent {
   Chip1 = "Chip 1",
-  Chip2 = "Chip 2"
+  Chip2 = "Chip 2",
+  Chip3 = "Chip 3",
 }
 
 class Code {

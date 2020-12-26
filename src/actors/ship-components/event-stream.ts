@@ -1,11 +1,52 @@
-export enum EventType {
+export enum SystemEventType {
   Scanner = 'SCANNER',
   Laser = 'LASER',
   ShieldHit = 'SHIELD_HIT',
-  ShieldToggle = 'SHIELD_TOGGLE',
+  Shield = 'SHIELD',
 }
 
-export type ShipEvent = [EventType, Array<number>];
+export enum ReadWrite {
+  Read = 'Read',
+  Write = 'Write',
+  ReadWrite = 'Read/Write'
+}
+
+export type OperandDocs = {
+  help: string;
+  args: Array<string>;
+  io: ReadWrite
+}
+
+export const EventTypeLookup: { [key: string]: { type: EventType } & OperandDocs } = {
+  SCANNER: {
+    type: SystemEventType.Scanner,
+    args: ['X', 'Y', 'T'],
+    help: 'Bogey detected (0 = Asteroid, 1 = Laser)',
+    io: ReadWrite.Read
+  },
+  LASER: {
+    type: SystemEventType.Laser,
+    args: ['X', 'Y'],
+    help: 'Fires laser',
+    io: ReadWrite.Write
+  },
+  SHIELD: {
+    type: SystemEventType.Shield,
+    args: ['1/0'],
+    help: 'Toggles shield on/off',
+    io: ReadWrite.Write
+  },
+  SHIELD_HIT: {
+    type: SystemEventType.ShieldHit,
+    args: [],
+    help: 'Shield hit',
+    io: ReadWrite.Read
+  }
+};
+
+export type EventType = SystemEventType | string;
+
+export type ShipEvent = Array<EventType | number>;
 
 export type Listener = (evt: ShipEvent) => Promise<void>;
 
@@ -23,7 +64,6 @@ export class EventStream {
 
   post(evt: ShipEvent) {
     for (const listener of this._listeners) {
-      // don't await promise?
       listener(evt);
     }
   }

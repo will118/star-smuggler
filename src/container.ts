@@ -85,7 +85,7 @@ export class Container extends ex.Scene {
     this._gameVm = new GameVm(
       eventStream,
       (x, y) => ship.fireGun(engine, x, y),
-      () => ship.toggleShield(engine));
+      (on) => ship.toggleShield(engine, on));
 
     console.log('Game VM started: ', this._gameVm);
   }

@@ -1,7 +1,7 @@
 import * as ex from 'excalibur';
 import { position, Horizontal, Vertical } from '../position';
 import { Bullet } from './bullet';
-import { EventType, eventStream } from './ship-components/event-stream';
+import { SystemEventType, eventStream } from './ship-components/event-stream';
 
 export class Shield extends ex.Actor {
   constructor() {
@@ -30,7 +30,7 @@ export class Shield extends ex.Actor {
   // TODO: collisions will still happen with entire circle
   private onCollisionStart(evt: ex.CollisionStartEvent) {
     if (evt.other instanceof Bullet) {
-      eventStream.post([EventType.ShieldHit, [evt.other.pos.x, evt.other.pos.y]]);
+      eventStream.post([SystemEventType.ShieldHit, evt.other.pos.x, evt.other.pos.y]);
     }
   }
 }
